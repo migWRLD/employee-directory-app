@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="img/logo/websiteLogo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap">
-  <link rel="stylesheet" href="directory.css?v=stitch-1">
+  <link rel="stylesheet" href="directory.css?v=teammate-2">
 </head>
 <body class="directory-page">
   <a class="skip-link" href="#directory">Skip to employee directory</a>
@@ -36,9 +36,12 @@
     <main id="directory" class="directory-section">
       <div class="section-heading">
         <div><h2>Team Members</h2><p>Find colleagues by name, role, email, department, or skill.</p></div>
+        <div class="directory-toolbar">
         <div class="view-switch" role="group" aria-label="Directory view">
           <button id="viewGridBtn" type="button" aria-pressed="true" aria-controls="employee-list"><span class="material-symbols-outlined" aria-hidden="true">grid_view</span> Grid</button>
           <button id="viewTableBtn" type="button" aria-pressed="false" aria-controls="employee-table-view"><span class="material-symbols-outlined" aria-hidden="true">table_rows</span> Table</button>
+        </div>
+        <a class="add-teammate" href="admin.html">+ Add Teammate</a>
         </div>
       </div>
       <p id="directory-status" role="status" aria-live="polite" hidden></p>
@@ -66,7 +69,7 @@
       <div id="About" class="about-section"><p class="eyebrow">BUILT TOGETHER</p><h2>About Our Team</h2><p>We built this Employee Directory App through the LA Tech Rising internship program. Our team uses HTML, CSS, and JavaScript to help people find colleagues, explore departments, and connect.</p><div class="team-values"><span>Collaboration</span><span>Learning</span><span>Teamwork</span></div></div>
       <div id="Contact" class="contact-section"><p class="eyebrow">LET’S CONNECT</p><h2>Contact Us</h2><dl><div><dt>Email</dt><dd><a href="mailto:Aomid6362@gmail.com">Aomid6362@gmail.com</a></dd></div><div><dt>Location</dt><dd>Los Angeles, CA</dd></div><div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/ahmadiomid92/" target="_blank" rel="noopener noreferrer">Omid Ahmadi ↗</a></dd></div></dl></div>
     </section>
-    <footer id="site-footer"><p>Employee Directory App © 2026 · LA Tech Rising</p><a class="footer-admin" href="admin.html"><span class="material-symbols-outlined" aria-hidden="true">lock</span> Admin</a></footer>
+    <footer id="site-footer"><p>Employee Directory App © 2026 · LA Tech Rising</p></footer>
   </div>
   <!-- Keep this order: library, configuration, shared store, directory UI. -->
   <script src="supabase-2.118.0.js"></script>
@@ -75,3 +78,4 @@
   <script src="directory.js?v=stitch-1"></script>
 </body>
 </html>
+
