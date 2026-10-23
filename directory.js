@@ -1245,7 +1245,7 @@ if (menuButton && navigation) {
 
     function updateActiveLink() {
         const current =
-            window.location.hash || '#Home';
+            (window.location.hash && window.location.hash !== '#Home') ? window.location.hash : '#directory';
 
         navigation.querySelectorAll('a')
             .forEach(link => {
@@ -1314,5 +1314,6 @@ window.addEventListener('keydown', event => {
     if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
 
 
