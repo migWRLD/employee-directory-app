@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="the-people-logo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap">
-  <link rel="stylesheet" href="directory.css?v=people-4">
+  <link rel="stylesheet" href="directory.css?v=separate-views-6">
 </head>
 <body class="directory-page">
   <a class="skip-link" href="#directory">Skip to employee directory</a>
@@ -29,18 +29,18 @@
       </button>
     </div>
   </header>
-  <div class="page-shell">
-    <section class="hero-section" aria-labelledby="page-title">
+  <main class="page-shell" id="page-content">
+    <section data-page="directory" class="hero-section" aria-labelledby="page-title">
       <div><p class="hero-label">THE PEOPLE · OUR TEAM</p><h1 id="page-title">People Directory</h1><p class="hero-description">Discover our team, explore departments, and find the right person to connect with.</p></div>
       <a class="hero-link" href="#Departments">Explore departments <span aria-hidden="true">→</span></a>
     </section>
-    <section class="statistics-section" aria-label="Employee statistics">
+    <section data-page="directory" class="statistics-section" aria-label="Employee statistics">
       <article class="stat-card"><div><p>Total employees</p><h2 id="total-employees">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">group</span></span></article>
       <article class="stat-card"><div><p>Departments</p><h2 id="total-departments">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">grid_view</span></span></article>
       <article class="stat-card"><div><p>Roles</p><h2 id="total-roles">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">badge</span></span></article>
       <article class="stat-card"><div><p>New this month</p><h2 id="new-employees">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">person_add</span></span></article>
     </section>
-    <main id="directory" class="directory-section">
+    <section data-page="directory" id="directory" class="directory-section">
       <div class="section-heading">
         <div><h2>Team Members</h2><p>Find colleagues by name, role, email, department, or skill.</p></div>
         <div class="directory-toolbar">
@@ -66,25 +66,24 @@
       <div id="employee-table-view" class="table-wrap" hidden>
         <table class="employee-table"><caption class="visually-hidden">Team members matching your search and department filter</caption><thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Email</th><th scope="col">Skills</th><th scope="col">Actions</th></tr></thead><tbody id="employee-table-body"></tbody></table>
       </div>
-    </main>
-    <section id="Departments" class="departments-section" aria-labelledby="departments-heading">
+    </section>
+    <section data-page="Departments" hidden id="Departments" class="departments-section" aria-labelledby="departments-heading">
       <div class="section-heading"><div><h2 id="departments-heading">Departments</h2><p>Select a department to meet its team.</p></div></div>
       <div id="department-grid" class="department-grid" role="group" aria-label="Departments"></div>
       <div id="department-members" class="department-members" aria-live="polite" hidden></div>
     </section>
-    <section class="about-contact-section" aria-label="About and contact">
-      <div id="About" class="about-section"><p class="eyebrow">BUILT TOGETHER</p><h2>About Our Team</h2><p>We built this Employee Directory App through the LA Tech Rising internship program. Our team uses HTML, CSS, and JavaScript to help people find colleagues, explore departments, and connect.</p><div class="team-values"><span>Collaboration</span><span>Learning</span><span>Teamwork</span></div></div>
-      <div id="Contact" class="contact-section"><p class="eyebrow">LET’S CONNECT</p><h2>Contact Us</h2><dl><div><dt>Email</dt><dd><a href="mailto:Aomid6362@gmail.com">Aomid6362@gmail.com</a></dd></div><div><dt>Location</dt><dd>Los Angeles, CA</dd></div><div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/ahmadiomid92/" target="_blank" rel="noopener noreferrer">Omid Ahmadi ↗</a></dd></div></dl></div>
-    </section>
+      <section data-page="About" hidden id="About" class="about-section" aria-label="About Our Team"><p class="eyebrow">BUILT TOGETHER</p><h2>About Our Team</h2><p>We built this Employee Directory App through the LA Tech Rising internship program. Our team uses HTML, CSS, and JavaScript to help people find colleagues, explore departments, and connect.</p><div class="team-values"><span>Collaboration</span><span>Learning</span><span>Teamwork</span></div></section>
+      <section data-page="Contact" hidden id="Contact" class="contact-section" aria-label="Contact Us"><p class="eyebrow">LET’S CONNECT</p><h2>Contact Us</h2><dl><div><dt>Email</dt><dd><a href="mailto:Aomid6362@gmail.com">Aomid6362@gmail.com</a></dd></div><div><dt>Location</dt><dd>Los Angeles, CA</dd></div><div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/ahmadiomid92/" target="_blank" rel="noopener noreferrer">Omid Ahmadi ↗</a></dd></div></dl></section>
     <footer id="site-footer"><p>The People © 2026 · Built through LA Tech Rising</p></footer>
-  </div>
+  </main>
   <!-- Keep this order: library, configuration, shared store, directory UI. -->
   <script src="supabase-2.118.0.js"></script>
   <script src="supabase-config.js"></script>
   <script src="employee-store.js"></script>
-  <script src="directory.js?v=directory-home-5"></script>
+  <script src="directory.js?v=separate-views-6"></script>
 </body>
 </html>
+
 
 
 

@@ -1244,8 +1244,16 @@ if (menuButton && navigation) {
     );
 
     function updateActiveLink() {
-        const current =
-            (window.location.hash && window.location.hash !== '#Home') ? window.location.hash : '#directory';
+        const requested = window.location.hash.slice(1);
+        const page = ['directory', 'Departments', 'About', 'Contact'].includes(requested)
+            ? requested : 'directory';
+        const current = '#' + page;
+
+        document.querySelectorAll('[data-page]').forEach(section => {
+            section.hidden = section.dataset.page !== page;
+        });
+        const titles = { directory: 'Employee Directory', Departments: 'Departments', About: 'About Our Team', Contact: 'Contact Us' };
+        document.title = 'The People | ' + titles[page];
 
         navigation.querySelectorAll('a')
             .forEach(link => {
@@ -1272,7 +1280,17 @@ if (menuButton && navigation) {
 
     window.addEventListener(
         'hashchange',
-        updateActiveLink
+        () => {
+            updateActiveLink();
+            closeMenu();
+            const visibleSection = document.querySelector('[data-page]:not([hidden])');
+            const heading = visibleSection?.querySelector('h1, h2');
+            if (heading) {
+                heading.setAttribute('tabindex', '-1');
+                heading.focus({ preventScroll: true });
+            }
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
     );
 
     updateActiveLink();
@@ -1312,8 +1330,10 @@ setDirectoryView(directoryView);
 window.addEventListener('keydown', event => {
     if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || document.querySelector('.profile-modal')) return;
     if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    if (searchInput.closest('[hidden]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
 
 
 
