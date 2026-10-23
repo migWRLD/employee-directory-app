@@ -677,6 +677,24 @@ function makeDepartmentBadge(employee) {
     return badge;
 }
 
+function cardIcon(kind) {
+    const icon = document.createElement('span');
+    icon.className = 'card-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    const paths = {
+        bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+        location: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+        people: '<circle cx="9" cy="8" r="3"/><path d="M2 21v-3a7 7 0 0 1 14 0v3M17 5a3 3 0 0 1 0 6M18 15a5 5 0 0 1 4 5M1 21h22"/>',
+        email: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 6 9 7 9-7"/>',
+        message: '<path d="M3 4h18v13H8l-5 4z"/>',
+        copy: '<path d="M8 8H3v13h13v-5"/><rect x="8" y="3" width="13" height="13" rx="1"/>',
+        arrow: '<path d="M4 12h16m-6-6 6 6-6 6"/>'
+    };
+    // Only constant icon paths are inserted as markup; employee fields use textContent.
+    icon.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + paths[kind] + '</svg>';
+    return icon;
+}
+
 function makeCard(employee) {
     const card = document.createElement('article');
     card.className = 'employee-card';
@@ -684,21 +702,91 @@ function makeCard(employee) {
     main.className = 'card-main';
     const top = document.createElement('div');
     top.className = 'card-top';
-    top.append(makeAvatar(employee), makeDepartmentBadge(employee));
+    top.append(makeAvatar(employee));
+    const topActions = document.createElement('div');
+    topActions.className = 'card-top-actions';
+    const bookmark = document.createElement('button');
+    bookmark.type = 'button';
+    bookmark.className = 'card-bookmark';
+    const key = 'directoryBookmark:' + String(employee.id || employee.email || employee.name);
+    let saved = false;
+    try { saved = localStorage.getItem(key) === 'true'; } catch {}
+    function updateBookmark() {
+        bookmark.setAttribute('aria-pressed', String(saved));
+        bookmark.setAttribute('aria-label', (saved ? 'Unsave ' : 'Save ') + employee.name);
+        bookmark.title = (saved ? 'Unsave ' : 'Save ') + employee.name;
+    }
+    bookmark.append(cardIcon('bookmark'));
+    updateBookmark();
+    bookmark.addEventListener('click', () => {
+        saved = !saved;
+        try { localStorage.setItem(key, String(saved)); } catch {}
+        updateBookmark();
+    });
+    topActions.append(makeDepartmentBadge(employee), bookmark);
+    top.append(topActions);
     const identity = document.createElement('div');
+    identity.className = 'card-identity';
+    const nameRow = document.createElement('div');
+    nameRow.className = 'card-name-row';
     const name = document.createElement('h3');
-    name.textContent = employee.name;
+    const nameLink = document.createElement('button');
+    nameLink.type = 'button';
+    nameLink.className = 'card-name-link';
+    nameLink.textContent = employee.name;
+    nameLink.addEventListener('click', () => openProfile(employee));
+    name.append(nameLink);
+    nameRow.append(name);
+    if (/manager|\bmgr\b/i.test(employee.title || '')) {
+        const badge = document.createElement('span');
+        badge.className = 'card-role-badge';
+        badge.textContent = 'MGR';
+        nameRow.append(badge);
+    }
     const title = document.createElement('p');
     title.className = 'employee-title';
     title.textContent = employee.title;
-    identity.append(name, title);
-    main.append(top, identity, makeSkillBadges(employee.skills), makeEmployeeEmail(employee));
+    identity.append(nameRow, title);
+    const details = document.createElement('div');
+    details.className = 'card-details';
+    function detail(kind, value) {
+        const row = document.createElement('p');
+        const text = document.createElement('span');
+        text.textContent = value;
+        row.append(cardIcon(kind), text);
+        return row;
+    }
+    details.append(detail('location', employee.location || 'Location not listed'));
+    const reports = employee.directReports;
+    details.append(detail('people', Number.isInteger(reports) && reports >= 0
+        ? 'Manages ' + reports + ' direct reports'
+        : employee.department || 'Department not listed'));
+    const skills = Array.isArray(employee.skills) ? employee.skills.filter(skill => typeof skill === 'string' && skill.trim()).slice(0, 3) : [];
+    main.append(top, identity, details, makeSkillBadges(skills));
     const footer = document.createElement('div');
     footer.className = 'card-footer';
     const actions = document.createElement('div');
     actions.className = 'card-actions';
-    actions.append(makeCopyButton(employee), makeProfileButton(employee));
-    footer.append(makeSocialLinks(employee), actions);
+    const email = document.createElement('a');
+    email.className = 'card-email-icon';
+    email.href = 'mailto:' + String(employee.email || '');
+    email.setAttribute('aria-label', 'Email ' + employee.name);
+    email.title = 'Email ' + employee.name;
+    email.append(cardIcon('email'));
+    const contact = document.createElement('button');
+    contact.type = 'button';
+    contact.className = 'card-contact-icon';
+    contact.setAttribute('aria-label', 'View contact details for ' + employee.name);
+    contact.title = 'View contact details';
+    contact.append(cardIcon('message'));
+    contact.addEventListener('click', () => {
+        openProfile(employee);
+        document.querySelector('#profile-tab-1')?.click();
+    });
+    actions.append(email, contact);
+    const profile = makeProfileButton(employee);
+    profile.replaceChildren(document.createTextNode('Profile '), cardIcon('arrow'));
+    footer.append(actions, profile);
     card.append(main, footer);
     return card;
 }
@@ -1217,3 +1305,4 @@ window.addEventListener('keydown', event => {
     if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
