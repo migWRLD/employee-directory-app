@@ -1,186 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Employee Directory</title>
-
-    <link rel="icon" type="image/png" href="img/logo/websiteLogo.png">
-    <link rel="stylesheet" href="style.css?v=departments-5">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find LA Tech Rising team members, explore departments, and connect with the team.">
+  <title>People Directory | LA Tech Rising</title>
+  <link rel="icon" type="image/png" href="img/logo/websiteLogo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap">
+  <link rel="stylesheet" href="directory.css?v=stitch-1">
 </head>
-
-<body>
-    <section id="Home" class="hero-section">
-        <div class="hero-container">
-            <header class="directory-header">
-                <div class="header-container">
-                    <a href="#Home" class="logo">LA Tech Rising</a>
-
-                    <button
-                        class="menu-toggle"
-                        aria-label="Toggle navigation menu"
-                        aria-expanded="false"
-                        aria-controls="primary-navigation"
-                        type="button"
-                    >
-                        ☰
-                    </button>
-
-                    <nav
-                        class="nav-links"
-                        id="primary-navigation"
-                        aria-label="Main navigation"
-                    >
-                        <a href="#Home">Home</a>
-                        <a href="#About">About</a>
-                        <a href="#directory">Directory</a>
-                        <a href="#Departments">Departments</a>
-                        <a href="#Contact">Contact</a>
-
-                        <button id = "darkModeToggle"
-                            class = "darkModeToggle"
-                            aria-label="Toggle dark mode">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z"/></svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M565-395q35-35 35-85t-35-85q-35-35-85-35t-85 35q-35 35-35 85t35 85q35 35 85 35t85-35Zm-226.5 56.5Q280-397 280-480t58.5-141.5Q397-680 480-680t141.5 58.5Q680-563 680-480t-58.5 141.5Q563-280 480-280t-141.5-58.5ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z"/></svg>
-                        </button>
-
-
-                    </nav>
-                </div>
-            </header>
-
-            <p class="header-label">EMPLOYEE DIRECTORY</p>
-
-            <h1>Meet Our Team</h1>
-
-            <p class="header-description">
-                Find people, departments, team members, contact
-                information and connect with our growing community
-                across our organization.
-            </p>
-        </div>
+<body class="directory-page">
+  <a class="skip-link" href="#directory">Skip to employee directory</a>
+  <header class="directory-header" id="Home">
+    <div class="header-container">
+      <a class="logo" href="#Home"><span class="brand-mark" aria-hidden="true">LT</span>LA Tech Rising<span class="brand-label">People</span></a>
+      <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
+      <nav class="nav-links" id="primary-navigation" aria-label="Main navigation">
+        <a href="#Home">Home</a><a href="#directory">Directory</a><a href="#Departments">Departments</a><a href="#About">About</a><a href="#Contact">Contact</a>
+      </nav>
+      <button id="darkModeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false">Dark mode</button>
+    </div>
+  </header>
+  <div class="page-shell">
+    <section class="hero-section" aria-labelledby="page-title">
+      <div><p class="hero-label">LA TECH RISING · OUR TEAM</p><h1 id="page-title">People Directory</h1><p class="hero-description">Discover our team, explore departments, and find the right person to connect with.</p></div>
+      <a class="hero-link" href="#Departments">Explore departments <span aria-hidden="true">→</span></a>
     </section>
-
+    <section class="statistics-section" aria-label="Employee statistics">
+      <article class="stat-card"><div><p>Total employees</p><h2 id="total-employees">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">group</span></span></article>
+      <article class="stat-card"><div><p>Departments</p><h2 id="total-departments">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">grid_view</span></span></article>
+      <article class="stat-card"><div><p>Roles</p><h2 id="total-roles">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">badge</span></span></article>
+      <article class="stat-card"><div><p>New this month</p><h2 id="new-employees">—</h2></div><span class="stat-icon" aria-hidden="true"><span class="material-symbols-outlined">person_add</span></span></article>
+    </section>
     <main id="directory" class="directory-section">
-        <h2>Employee Directory</h2>
-
-        <p>Search and explore our team members below.</p>
-
-        <p id="directory-status" role="status" aria-live="polite" hidden></p>
-
-        <section class="search-container">
-            <span class="search-icon" aria-hidden="true">⌕</span>
-
-            <label for="search" class="visually-hidden">
-                Search employees
-            </label>
-            
-            <input
-                type="search"
-                id="search"
-                placeholder="Search by name, title, or department..."
-                aria-label="Search employees"
-            >
-
-            <label for="department-filter" class="visually-hidden">
-                Filter by department
-            </label>
-
-            <select id="department-filter">
-                <option value="all">All Departments</option>
-            </select>
-
-            <label for="sort-filter" class="visually-hidden">
-                Sort employees
-            </label>
-
-            <select id="sort-filter" aria-label="Sort employees">
-                <option value="az">Sort A-Z</option>
-                <option value="za">Sort Z-A</option>
-             </select>
-
-            
-            <button
-                id="clearSearch"
-                type="button"
-                aria-label="Clear search and filters"
-            >
-                Clear
-            </button>
-        </section>
-
-        <p id="results-count" aria-live="polite"></p>
-
-        <section
-            id="employee-list"
-            class="employee-grid"
-            aria-label="Employee profiles"
-        >
-            <!-- Employee cards appear here -->
-        </section>
-
+      <div class="section-heading">
+        <div><h2>Team Members</h2><p>Find colleagues by name, role, email, department, or skill.</p></div>
+        <div class="view-switch" role="group" aria-label="Directory view">
+          <button id="viewGridBtn" type="button" aria-pressed="true" aria-controls="employee-list"><span class="material-symbols-outlined" aria-hidden="true">grid_view</span> Grid</button>
+          <button id="viewTableBtn" type="button" aria-pressed="false" aria-controls="employee-table-view"><span class="material-symbols-outlined" aria-hidden="true">table_rows</span> Table</button>
+        </div>
+      </div>
+      <p id="directory-status" role="status" aria-live="polite" hidden></p>
+      <section class="filter-panel" aria-label="Find employees">
+        <div class="search-container">
+          <div class="search-field"><label for="search">Search employees</label><div class="input-wrap"><span class="search-icon material-symbols-outlined" aria-hidden="true">search</span><input id="search" type="search" placeholder="Search name, role, email, or skill…" aria-keyshortcuts="/"><kbd aria-hidden="true">/</kbd></div></div>
+          <div class="filter-field"><label for="department-filter">Department</label><select id="department-filter"><option value="all">All Departments</option></select></div>
+          <div class="filter-field"><label for="sort-filter">Sort employees</label><select id="sort-filter"><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option></select></div>
+          <button id="clearSearch" class="clear-button" type="button" aria-label="Clear search and filters">Clear all</button>
+        </div>
+        <div id="department-pills" class="department-pills" role="group" aria-label="Quick department filters"></div>
+      </section>
+      <p id="results-count" aria-live="polite"></p>
+      <section id="employee-list" class="employee-grid" aria-label="Employee profiles"></section>
+      <div id="employee-table-view" class="table-wrap" hidden>
+        <table class="employee-table"><caption class="visually-hidden">Team members matching your search and department filter</caption><thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">Email</th><th scope="col">Skills</th><th scope="col">Actions</th></tr></thead><tbody id="employee-table-body"></tbody></table>
+      </div>
     </main>
-
-    <section
-        id="Departments"
-        class="departments-section"
-        aria-labelledby="departments-heading"
-    >
-        <h2 id="departments-heading">Departments</h2>
-
-        <p>Select a department to see its team members.</p>
-
-        <div
-            id="department-grid"
-            class="department-grid"
-            role="group"
-            aria-label="Departments"
-        >
-            <!-- Department cards appear here -->
-        </div>
-
-        <div
-            id="department-members"
-            class="department-members"
-            aria-live="polite"
-            hidden
-        >
-            <!-- Selected department's employees appear here -->
-        </div>
+    <section id="Departments" class="departments-section" aria-labelledby="departments-heading">
+      <div class="section-heading"><div><h2 id="departments-heading">Departments</h2><p>Select a department to meet its team.</p></div></div>
+      <div id="department-grid" class="department-grid" role="group" aria-label="Departments"></div>
+      <div id="department-members" class="department-members" aria-live="polite" hidden></div>
     </section>
-
     <section class="about-contact-section" aria-label="About and contact">
-        <div id="About" class="about-section">
-            <h2>About <span>Our Team</span></h2>
-            <p class="about-description">We are a diverse group of professionals passionate about technology, innovation, and making a positive impact. Our team brings together different skills and perspectives to build great solutions.</p>
-            <div class="team-values">
-                <div class="value-item"><div class="value-icon collaboration-icon"><img src="img/collabWebsite.gif" alt="" loading="lazy"></div><h3>Collaboration</h3><p>Working together</p></div>
-                <div class="value-item"><div class="value-icon innovation-icon"><img src="img/innovationWebsite.gif" alt="" loading="lazy"></div><h3>Innovation</h3><p>Creative solutions</p></div>
-                <div class="value-item"><div class="value-icon growth-icon"><img src="img/GrowthWebs.gif" alt="" loading="lazy"></div><h3>Growth</h3><p>Continuous learning</p></div>
-            </div>
-        </div>
-        <div class="contact-section" id="Contact">
-            <h2>Contact <span>Us</span></h2>
-            <p class="contact-description">Get in touch with our team</p>
-            <div class="contact-item"><div class="contact-icon"><img src="img/EmailWebs.gif" alt="" loading="lazy"></div><div><h3>Email</h3><a href="mailto:Aomid6362@gmail.com">Aomid6362@gmail.com</a></div></div>
-            <div class="contact-item"><div class="contact-icon"><img src="img/LocationWeb.gif" alt="" loading="lazy"></div><div><h3>Location</h3><p>Los Angeles, CA</p></div></div>
-            <div class="contact-item"><div class="contact-icon"><img src="img/Linkedln.gif" alt="" loading="lazy"></div><div><h3>LinkedIn</h3><a href="https://www.linkedin.com/in/ahmadiomid92/" target="_blank" rel="noopener noreferrer">Omid Ahmadi</a></div></div>
-        </div>
+      <div id="About" class="about-section"><p class="eyebrow">BUILT TOGETHER</p><h2>About Our Team</h2><p>We built this Employee Directory App through the LA Tech Rising internship program. Our team uses HTML, CSS, and JavaScript to help people find colleagues, explore departments, and connect.</p><div class="team-values"><span>Collaboration</span><span>Learning</span><span>Teamwork</span></div></div>
+      <div id="Contact" class="contact-section"><p class="eyebrow">LET’S CONNECT</p><h2>Contact Us</h2><dl><div><dt>Email</dt><dd><a href="mailto:Aomid6362@gmail.com">Aomid6362@gmail.com</a></dd></div><div><dt>Location</dt><dd>Los Angeles, CA</dd></div><div><dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/ahmadiomid92/" target="_blank" rel="noopener noreferrer">Omid Ahmadi ↗</a></dd></div></dl></div>
     </section>
-
-    <footer id="site-footer">
-        <p>
-            Contact team members using the email and social links
-            on their cards.
-        </p>
-
-        <div class="footer-bottom"><p>Employee Directory App © 2026</p><a href="admin.html" class="admin-glass footer-admin"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Admin</span></a></div>
-    </footer>
-
-    <script src="supabase-2.118.0.js"></script>
-    <script src="supabase-config.js"></script>
-    <script src="employee-store.js"></script>
-    <script src="script.js?v=departments-5"></script>
+    <footer id="site-footer"><p>Employee Directory App © 2026 · LA Tech Rising</p><a class="footer-admin" href="admin.html"><span class="material-symbols-outlined" aria-hidden="true">lock</span> Admin</a></footer>
+  </div>
+  <!-- Keep this order: library, configuration, shared store, directory UI. -->
+  <script src="supabase-2.118.0.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="employee-store.js"></script>
+  <script src="directory.js?v=stitch-1"></script>
 </body>
 </html>
