@@ -1279,21 +1279,30 @@ if (menuButton && navigation) {
 }
 
 
-// Theme preference is shared with the previous public directory.
+// Preserve the existing theme preference and keep the SVG switch intact.
 const darkModeToggle = document.querySelector('#darkModeToggle');
 function applyTheme(dark) {
     document.body.classList.toggle('darkMode', dark);
     darkModeToggle.setAttribute('aria-pressed', String(dark));
-    darkModeToggle.textContent = dark ? 'Light mode' : 'Dark mode';
-    darkModeToggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+    darkModeToggle.title = dark ? 'Switch to day mode' : 'Switch to night mode';
 }
-let savedDark = false;
-try { savedDark = localStorage.getItem('darkMode') === 'enabled'; } catch {}
-applyTheme(savedDark);
+const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+let themePreference = null;
+try { themePreference = localStorage.getItem('darkMode'); } catch {}
+applyTheme(themePreference === null ? systemTheme.matches : themePreference === 'enabled');
 darkModeToggle.addEventListener('click', () => {
     const dark = !document.body.classList.contains('darkMode');
+    themePreference = dark ? 'enabled' : 'null';
     applyTheme(dark);
-    try { localStorage.setItem('darkMode', dark ? 'enabled' : 'null'); } catch {}
+    try { localStorage.setItem('darkMode', themePreference); } catch {}
+});
+systemTheme.addEventListener?.('change', event => {
+    if (themePreference === null) applyTheme(event.matches);
+});
+window.addEventListener('storage', event => {
+    if (event.key !== 'darkMode') return;
+    themePreference = event.newValue;
+    applyTheme(themePreference === null ? systemTheme.matches : themePreference === 'enabled');
 });
 
 // Grid and table share the existing search, sorting, and data source.
@@ -1305,4 +1314,5 @@ window.addEventListener('keydown', event => {
     if (event.target.closest?.('input, textarea, select, [contenteditable]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
 
