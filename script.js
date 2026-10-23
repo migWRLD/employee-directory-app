@@ -685,6 +685,7 @@ function makeCard(employee) {
     name.textContent = employee.name;
 
     const title = document.createElement('p');
+    title.className = 'employee-title';
     title.textContent = employee.title;
 
     const department = document.createElement('p');
