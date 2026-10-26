@@ -1,75 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Employee Manager | LA Tech Rising</title>
-    <link rel="icon" href="img/logo/websiteLogo.png">
-    <link rel="stylesheet" href="style.css?v=shared-admin-1">
-    <link rel="stylesheet" href="admin.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Add and manage teammates in The People directory.">
+  <title>Add Teammate | The People</title>
+  <link rel="icon" type="image/png" href="the-people-logo.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="admin.css?v=teammate-7">
 </head>
 <body class="admin-page">
-    <header class="admin-header">
-        <a class="admin-brand" href="index.html#Home">LA Tech Rising</a>
-        <a href="index.html#directory">← View directory</a>
-    </header>
-    <main>
-        <div class="admin-intro"><p class="admin-eyebrow">EMPLOYEE DIRECTORY</p><h1>Employee manager</h1><p>Add people, update their details, and keep your team directory current.</p></div>
-        <p id="admin-status" class="admin-status" role="status" aria-live="polite">Connecting…</p>
-        <section id="login-panel" class="admin-panel login-panel" hidden>
-            <h2>Admin login</h2>
-            <p>Sign in with your approved admin account.</p>
-            <form id="login-form">
-                <label for="login-email">Email</label>
-                <input id="login-email" type="email" autocomplete="username" required maxlength="254">
-                <label for="login-password">Password</label>
-                <input id="login-password" type="password" autocomplete="current-password" required>
-                <button class="admin-primary" type="submit" id="sign-in">Sign in</button>
-            </form>
-        </section>
-        <div id="session-bar" class="session-bar" hidden><span id="signed-in-as"></span><button id="sign-out" type="button">Sign out</button></div>
-        <section id="manager-panel" class="manager-grid" aria-label="Manage employees" hidden>
-            <section class="admin-panel">
-                <h2 id="editor-title">Add employee</h2>
-                <form id="employee-form">
-                    <fieldset id="employee-fields">
-                        <legend class="visually-hidden">Employee details</legend>
-                        <p class="form-hint">Fields marked * are required. These details will appear in the public directory.</p>
-                        <div class="form-grid">
-                            <div><label for="employee-name">Full name *</label><input id="employee-name" name="name" required maxlength="120" autocomplete="off"></div>
-                            <div><label for="employee-title">Role / job title *</label><input id="employee-title" name="title" required maxlength="120"></div>
-                            <div><label for="employee-department">Department *</label><input id="employee-department" name="department" required maxlength="80" list="department-options"><datalist id="department-options"></datalist></div>
-                            <div><label for="employee-email">Public email *</label><input id="employee-email" name="email" type="email" required maxlength="254"></div>
-                        </div>
-                        <label for="employee-photo">Profile photo</label>
-                        <input id="employee-photo" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="photo-hint">
-                        <p id="photo-hint" class="form-hint">JPG, PNG, or WebP. Maximum 2 MB.</p>
-                        <img id="photo-preview" class="admin-photo-preview" alt="Selected employee photo" hidden>
-                        <label class="checkbox-label"><input id="remove-photo" type="checkbox"> Remove current photo</label>
-                        <label for="employee-bio">Short bio</label><textarea id="employee-bio" name="bio" rows="3" maxlength="2000"></textarea>
-                        <label for="employee-skills">Skills</label><input id="employee-skills" name="skills" placeholder="HTML, CSS, JavaScript" aria-describedby="skills-hint"><p id="skills-hint" class="form-hint">Separate skills with commas. Up to 20 skills.</p>
-                        <label for="employee-joiningDate">Joining date</label><input id="employee-joiningDate" name="joiningDate" type="date">
-                        <label for="employee-linkedin">LinkedIn URL</label><input id="employee-linkedin" name="linkedin" type="url" maxlength="2000" placeholder="https://www.linkedin.com/in/…">
-                        <label for="employee-github">GitHub URL</label><input id="employee-github" name="github" type="url" maxlength="2000" placeholder="https://github.com/…">
-                        <label for="employee-portfolio">Portfolio URL</label><input id="employee-portfolio" name="portfolio" type="url" maxlength="2000" placeholder="https://…">
-                        <div class="admin-actions"><button class="admin-primary" id="save-employee" type="submit">Add employee</button><button id="new-employee" type="button">Clear / new employee</button></div>
-                    </fieldset>
-                </form>
-            </section>
-            <section class="admin-panel">
-                <div class="list-heading"><h2>Employees <span id="admin-count"></span></h2><button id="reload-employees" type="button">Refresh</button></div>
-                <label for="admin-search">Find an employee</label><input id="admin-search" type="search" placeholder="Name, role, or department">
-                <ul id="admin-employees" class="admin-employees" aria-label="Employees"></ul>
-            </section>
-        </section>
-    </main>
-    <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description">
-        <h2 id="delete-title">Remove employee?</h2><p id="delete-description"></p>
-        <div class="admin-actions"><button id="cancel-delete" type="button" autofocus>Cancel</button><button id="confirm-delete" class="admin-danger" type="button">Remove employee</button></div>
-    </dialog>
-    <script src="supabase-2.118.0.js"></script>
-    <script src="supabase-config.js"></script>
-    <script src="employee-store.js"></script>
-    <script src="admin.js"></script>
+  <a class="skip-link" href="#page-content">Skip to main content</a>
+  <header class="admin-header">
+    <a class="admin-brand" href="index.html#directory" aria-label="The People directory"><img src="the-people-logo.png" alt="The People" width="1960" height="816"></a>
+    <nav aria-label="Main navigation"><a href="index.html#directory">Directory</a><a href="index.html#Departments">Departments</a><a href="index.html#About">About</a><a href="index.html#Contact">Contact</a></nav>
+    <button id="admin-theme" type="button" aria-label="Night mode" aria-pressed="false"><span aria-hidden="true">◐</span> <span id="theme-label">Night mode</span></button>
+  </header>
+  <main id="page-content" class="admin-shell">
+    <div class="breadcrumb"><a href="index.html#directory">Directory</a><span aria-hidden="true">/</span><span>Add Teammate</span></div>
+    <div class="admin-intro"><div><p class="admin-eyebrow">THE PEOPLE · TEAM MANAGEMENT</p><h1>Add New Teammate</h1><p>Introduce someone new to the team. Build their profile and preview it as you go.</p></div><a class="back-link" href="index.html#directory">← Back to directory</a></div>
+    <p id="admin-status" class="admin-status" role="status" aria-live="polite">Connecting…</p>
+    <section id="login-panel" class="admin-panel login-panel" hidden aria-labelledby="login-title">
+      <div class="section-icon" aria-hidden="true">↗</div><h2 id="login-title">Admin login</h2><p>Sign in with your approved admin account to add or manage teammates.</p>
+      <form id="login-form"><label for="login-email">Email</label><input id="login-email" type="email" autocomplete="username" required maxlength="254"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" required><button class="admin-primary" type="submit" id="sign-in">Sign in</button></form>
+    </section>
+    <div id="session-bar" class="session-bar" hidden><span><span class="session-dot" aria-hidden="true"></span><span id="signed-in-as"></span></span><button id="sign-out" type="button">Sign out</button></div>
+    <section id="manager-panel" aria-label="Manage employees" hidden>
+      <div class="editor-command"><div><p class="admin-eyebrow">TEAMMATE PROFILE</p><h2 id="editor-title">Add teammate</h2></div><div class="admin-actions"><button id="restore-draft" type="button" hidden>Restore draft</button><button id="save-draft" type="button">Save draft</button><button class="admin-primary" id="save-employee" type="submit" form="employee-form">Add teammate <span aria-hidden="true">→</span></button></div></div>
+      <div class="manager-grid">
+        <form id="employee-form"><fieldset id="employee-fields"><legend class="visually-hidden">Employee details</legend>
+          <section class="admin-panel form-section" aria-labelledby="identity-heading">
+            <div class="panel-heading"><span class="section-icon" aria-hidden="true">01</span><div><h3 id="identity-heading">Basic identity &amp; contact</h3><p>A name, a face, and a way to connect.</p></div><span class="required-pill">Required</span></div>
+            <p class="form-hint public-note">Fields marked * are required. Profile details and photos appear in the public directory.</p>
+            <div class="photo-upload"><div class="upload-avatar"><span id="upload-initials" aria-hidden="true">+</span><img id="photo-preview" class="admin-photo-preview" alt="Selected employee photo" hidden></div><div class="photo-controls"><label for="employee-photo">Profile photo</label><input id="employee-photo" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="photo-hint"><p id="photo-hint" class="form-hint">JPG, PNG, or WebP · Maximum 2 MB. Initials appear if no photo is added.</p><label class="checkbox-label"><input id="remove-photo" type="checkbox"> Remove current photo</label></div></div>
+            <div class="form-grid"><div><label for="employee-name">Full name *</label><input id="employee-name" name="name" required maxlength="120" autocomplete="off" placeholder="e.g. Alex Morgan"></div><div><label for="employee-email">Public email *</label><input id="employee-email" name="email" type="email" required maxlength="254" placeholder="alex@example.com"></div></div>
+          </section>
+          <section class="admin-panel form-section" aria-labelledby="role-heading">
+            <div class="panel-heading"><span class="section-icon" aria-hidden="true">02</span><div><h3 id="role-heading">Role &amp; department</h3><p>Help people find the right teammate.</p></div><span class="required-pill">Required</span></div>
+            <div class="form-grid"><div><label for="employee-title">Role / job title *</label><input id="employee-title" name="title" required maxlength="120" placeholder="e.g. Software Engineer"></div><div><label for="employee-department">Department *</label><input id="employee-department" name="department" required maxlength="80" list="department-options" placeholder="Select or enter a department"><datalist id="department-options"></datalist></div><div><label for="employee-joiningDate">Joining date</label><input id="employee-joiningDate" name="joiningDate" type="date"></div></div>
+          </section>
+          <section class="admin-panel form-section" aria-labelledby="skills-heading">
+            <div class="panel-heading"><span class="section-icon" aria-hidden="true">03</span><div><h3 id="skills-heading">Bio, skills &amp; expertise</h3><p>Show what this person brings to the team.</p></div></div>
+            <label for="employee-bio">Short bio</label><textarea id="employee-bio" name="bio" rows="3" maxlength="2000" placeholder="A little about their experience, interests, or work…"></textarea>
+            <label for="employee-skills">Skills</label><input id="employee-skills" name="skills" placeholder="HTML, CSS, JavaScript" aria-describedby="skills-hint"><p id="skills-hint" class="form-hint">Separate skills with commas. Up to 20 skills, 80 characters each.</p><div id="skill-chip-list" class="skill-chips" aria-label="Selected skills"></div>
+            <div class="suggested-skills"><span>Quick add:</span><button type="button" data-skill="HTML">+ HTML</button><button type="button" data-skill="CSS">+ CSS</button><button type="button" data-skill="JavaScript">+ JavaScript</button><button type="button" data-skill="Project Management">+ Project Management</button></div>
+          </section>
+          <section class="admin-panel form-section" aria-labelledby="links-heading">
+            <div class="panel-heading"><span class="section-icon" aria-hidden="true">04</span><div><h3 id="links-heading">Professional links</h3><p>Optional places to explore their work.</p></div></div>
+            <label for="employee-linkedin">LinkedIn URL</label><input id="employee-linkedin" name="linkedin" type="url" maxlength="2000" placeholder="https://www.linkedin.com/in/…"><label for="employee-github">GitHub URL</label><input id="employee-github" name="github" type="url" maxlength="2000" placeholder="https://github.com/…"><label for="employee-portfolio">Portfolio URL</label><input id="employee-portfolio" name="portfolio" type="url" maxlength="2000" placeholder="https://…">
+          </section>
+          <div class="form-bottom"><p>Ready? Use <strong>Add teammate</strong> above to publish this profile.</p><button id="new-employee" type="button">Clear / new teammate</button></div>
+        </fieldset></form>
+        <aside class="preview-sidebar" aria-label="Profile preview and completeness">
+          <section class="admin-panel preview-panel"><div class="preview-heading"><h3>Live Directory Preview</h3><span class="preview-dot" aria-hidden="true"></span></div><p class="form-hint">Updates as you type. Nothing is published until you save.</p>
+            <article class="preview-card" aria-label="Teammate card preview"><div class="preview-card-main"><div class="preview-card-top"><div class="preview-avatar"><span id="card-initials">?</span><img id="card-photo" alt="" hidden></div><span id="card-department" class="department-badge">Department</span></div><h3 id="card-name">Your new teammate</h3><p id="card-title">Role / job title</p><p id="card-email" class="preview-email">Public email</p><p id="card-bio" class="preview-bio" hidden></p><div id="card-skills" class="skill-chips"></div></div><div class="preview-card-footer"><span>Profile preview</span><span aria-hidden="true">→</span></div></article>
+          </section>
+          <section class="admin-panel readiness-panel"><div class="preview-heading"><h3>Profile Readiness</h3><span id="readiness-label">0 of 4 required</span></div><progress id="readiness-progress" max="4" value="0" aria-label="Required profile fields completed">0 of 4</progress><ul id="readiness-list"><li data-check="name"><span aria-hidden="true">○</span> Full name</li><li data-check="email"><span aria-hidden="true">○</span> Valid public email</li><li data-check="title"><span aria-hidden="true">○</span> Role / job title</li><li data-check="department"><span aria-hidden="true">○</span> Department</li></ul><p class="form-hint">Photos, skills, and links are optional. A complete checklist means the required fields are filled in.</p></section>
+          <div class="preview-tip"><strong>A welcoming first impression</strong><p>A clear photo, a short bio, and a few skills help teammates connect.</p></div>
+        </aside>
+      </div>
+      <section class="admin-panel roster-panel" aria-labelledby="roster-heading"><div class="list-heading"><div><p class="admin-eyebrow">KEEP YOUR TEAM CURRENT</p><h2 id="roster-heading">Manage teammates <span id="admin-count"></span></h2></div><button id="reload-employees" type="button">Refresh list</button></div><label for="admin-search">Find a teammate</label><input id="admin-search" type="search" placeholder="Name, role, or department"><ul id="admin-employees" class="admin-employees" aria-label="Employees"></ul></section>
+    </section>
+    <footer>The People © 2026 · Built through LA Tech Rising</footer>
+  </main>
+  <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description"><h2 id="delete-title">Remove employee?</h2><p id="delete-description"></p><div class="admin-actions"><button id="cancel-delete" type="button" autofocus>Cancel</button><button id="confirm-delete" class="admin-danger" type="button">Remove employee</button></div></dialog>
+  <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js"></script><script src="admin.js?v=teammate-7"></script>
 </body>
 </html>
