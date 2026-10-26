@@ -13,3 +13,28 @@ async function setup(admin, failSave=false) {
 test('anonymous visitors cannot see management form',async()=>{const {w}=await setup(null);assert.equal(w.document.getElementById('manager-panel').hidden,true);assert.equal(w.document.getElementById('login-panel').hidden,false);w.close();});
 test('employee names render as text, and approved admins can save',async()=>{const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;assert.equal(d.querySelector('#admin-employees img'),null);assert.match(d.querySelector('#admin-employees').textContent,/<img src=x/);for(const [key,value] of Object.entries({name:'New Person',title:'Tester',department:'QA',email:'new@example.com'}))d.getElementById('employee-'+key).value=value;d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().name,'New Person');assert.equal(d.getElementById('employee-name').value,'');w.close();});
 test('failed save preserves draft and restores controls',async()=>{const {w}=await setup({id:'admin',email:'owner@example.com'},true);const d=w.document;for(const [key,value] of Object.entries({name:'Draft Person',title:'Tester',department:'QA',email:'new@example.com'}))d.getElementById('employee-'+key).value=value;d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(d.getElementById('employee-name').value,'Draft Person');assert.equal(d.getElementById('employee-fields').disabled,false);assert.match(d.getElementById('admin-status').textContent,/Connection failed/);w.close();});
+
+
+test('live preview uses text and shows only three skill badges', async()=>{
+ const {w}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;
+ for(const [key,value] of Object.entries({name:'<img src=x onerror=alert(1)>',title:'Engineer',department:'Engineering',email:'person@example.com',skills:'HTML, CSS, JavaScript, SQL'}))d.getElementById('employee-'+key).value=value;
+ d.getElementById('employee-name').dispatchEvent(new w.Event('input',{bubbles:true}));
+ assert.equal(d.getElementById('card-name').textContent,'<img src=x onerror=alert(1)>');assert.equal(d.querySelector('#card-name img'),null);
+ assert.equal(d.querySelectorAll('#card-skills .skill-chip').length,3);assert.equal(d.getElementById('readiness-progress').value,4);
+ d.querySelector('#skill-chip-list button').click();assert.equal(d.getElementById('employee-skills').value,'CSS, JavaScript, SQL');
+ w.close();
+});
+test('suggested skills avoid duplicates and skill limit blocks invalid submission',async()=>{
+ const {w}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;const b=d.querySelector('[data-skill="HTML"]');b.click();b.click();assert.equal(d.getElementById('employee-skills').value,'HTML');
+ d.getElementById('employee-skills').value=Array.from({length:21},(_,i)=>'Skill '+i).join(',');d.getElementById('employee-skills').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(d.getElementById('employee-skills').checkValidity(),false);
+ d.getElementById('new-employee').click();assert.equal(d.getElementById('employee-skills').checkValidity(),true);assert.equal(d.getElementById('readiness-progress').value,0);w.close();
+});
+test('local draft is scoped to admin and restoring does not publish',async()=>{
+ const {w,getSaved}=await setup({id:'admin-a',email:'owner@example.com'});const d=w.document;
+ d.getElementById('employee-name').value='Draft Person';d.getElementById('save-draft').click();assert.ok(w.localStorage.getItem('thePeople.teammateDraft.admin-a'));assert.equal(w.localStorage.getItem('thePeople.teammateDraft.admin-b'),null);
+ d.getElementById('new-employee').click();d.getElementById('restore-draft').click();assert.equal(d.getElementById('employee-name').value,'Draft Person');assert.equal(d.getElementById('card-name').textContent,'Draft Person');assert.equal(getSaved(),undefined);w.close();
+});
+test('editing refreshes preview and saving preserves optional fields',async()=>{
+ const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;d.querySelector('#admin-employees button').click();assert.match(d.getElementById('card-name').textContent,/<img/);assert.equal(d.getElementById('save-draft').hidden,true);
+ d.getElementById('employee-bio').value='Bio';d.getElementById('employee-linkedin').value='https://linkedin.com/in/example';d.getElementById('employee-joiningDate').value='2026-10-01';d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().bio,'Bio');assert.equal(getSaved().joiningDate,'2026-10-01');assert.equal(getSaved().linkedin,'https://linkedin.com/in/example');assert.equal(d.getElementById('card-name').textContent,'Your new teammate');w.close();
+});
