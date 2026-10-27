@@ -1,0 +1,12 @@
+/* ThemeChanger reference: compact sun/moon button with gentle hover scaling. */
+button.theme-changer{position:relative;display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;min-width:44px;min-height:44px;padding:8px;border:0;border-radius:50%;background:transparent;box-shadow:none;cursor:pointer;transition:transform .3s ease}
+.theme-changer svg{grid-area:1/1;width:28px;height:28px;transition:opacity .2s ease,transform .3s ease}
+.theme-changer .changer-sun{color:#ff8c00;opacity:1;transform:rotate(0) scale(1)}
+.theme-changer .changer-moon{color:#949494;opacity:0;transform:rotate(-25deg) scale(.7)}
+.theme-changer[aria-pressed="true"] .changer-sun{opacity:0;transform:rotate(25deg) scale(.7)}
+.theme-changer[aria-pressed="true"] .changer-moon{opacity:1;transform:rotate(0) scale(1)}
+.theme-changer:focus-visible{outline:3px solid var(--primary,#4263eb);outline-offset:3px}
+@media(hover:hover){button.theme-changer:hover{transform:scale(1.1);background:transparent}}
+@media(max-width:500px){.header-container .theme-changer{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){button.theme-changer,.theme-changer svg{transition:none}button.theme-changer:hover{transform:none}}
+#admin-theme.theme-changer{display:grid;gap:0}

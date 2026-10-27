@@ -12,13 +12,13 @@
       "Communication",
       "Organization"
     ],
-"projects": [
-        "Employee Directory App",
-        "TBD"
+    "projects": [
+      "Employee Directory App",
+      "TBD"
     ],
-
     "linkedin": "https://www.linkedin.com/in/ahmadiomid92/",
-    "github": "https://github.com/siromidahmadi"
+    "github": "https://github.com/siromidahmadi",
+    "location": "Los Angeles, CA (PT)"
   },
   {
     "name": "Napier Jacquese",
@@ -34,17 +34,16 @@
       "JavaScript"
     ],
     "projects": [
-        "Employee Directory App",
-        "TBD"
+      "Employee Directory App",
+      "TBD"
     ],
     "linkedin": "https://www.linkedin.com/in/jacquese-napier/",
-    "github": "https://github.com/bigjacqq"
+    "github": "https://github.com/bigjacqq",
+    "location": "San Antonio, TX (CT)"
   },
   {
     "name": "Arias Miguel",
     "title": "Co-Lead",
-    "department": "Operations",
-    "email": "sofia.martinez@example.com",
     "department": "Engineering",
     "email": "ariasmiguel727@gmail.com",
     "image": "img/3.png",
@@ -57,12 +56,12 @@
       "JavaScript"
     ],
     "projects": [
-        "Employee Directory App",
-        "TBD"
+      "Employee Directory App",
+      "TBD"
     ],
-
     "linkedin": "https://www.linkedin.com/in/miguel-arias-/",
-    "github": "https://github.com/migWRLD"
+    "github": "https://github.com/migWRLD",
+    "location": "Denver, CO (MT)"
   },
   {
     "name": "Lubowa Najeeb",
@@ -79,7 +78,8 @@
     ],
     "linkedin": "https://www.linkedin.com/in/najeeb-lubowa-05858b3b7/",
     "github": "https://github.com/Nbawali4",
-    "portfolio": "https://nbawali4.github.io/Food-Banks/"
+    "portfolio": "https://nbawali4.github.io/Food-Banks/",
+    "location": "New York, NY (ET)"
   },
   {
     "name": "Omoroghomwan Jessy",
@@ -93,15 +93,14 @@
       "HTML",
       "CSS",
       "JavaScript"
-
     ],
     "projects": [
-        "Employee Directory App",
-        "TBD"
+      "Employee Directory App",
+      "TBD"
     ],
-
     "linkedin": "http://www.linkedin.com/in/jessy-omoroghomwan-6b552b257",
-    "github": "https://github.com/JessyJoyce"
+    "github": "https://github.com/JessyJoyce",
+    "location": "Phoenix, AZ (MST)"
   },
   {
     "name": "Vera Kassandra",
@@ -117,13 +116,12 @@
       "JavaScript"
     ],
     "projects": [
-        "Employee Directory App",
-        "TBD"
+      "Employee Directory App",
+      "TBD"
     ],
     "linkedin": "https://www.linkedin.com/in/kassandra-vera-0999351a2/",
     "github": "https://github.com/Kass82",
-    "portfolio": "https://kass82.github.io/"
+    "portfolio": "https://kass82.github.io/",
+    "location": "Los Angeles, CA (PT)"
   }
 ]
-
-

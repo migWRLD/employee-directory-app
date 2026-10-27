@@ -1379,12 +1379,13 @@ if (menuButton && navigation) {
 }
 
 
-// Preserve the existing theme preference and keep the SVG switch intact.
+// ThemeChanger-style icon button uses the existing saved theme preference.
 const darkModeToggle = document.querySelector('#darkModeToggle');
 function applyTheme(dark) {
     document.body.classList.toggle('darkMode', dark);
     darkModeToggle.setAttribute('aria-pressed', String(dark));
-    darkModeToggle.title = dark ? 'Switch to day mode' : 'Switch to night mode';
+    darkModeToggle.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    darkModeToggle.setAttribute('aria-label', darkModeToggle.title);
 }
 const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
 let themePreference = null;

@@ -22,6 +22,7 @@ create table public.employees (
     linkedin text not null default '' check (linkedin = '' or linkedin ~ '^https?://'),
     github text not null default '' check (github = '' or github ~ '^https?://'),
     portfolio text not null default '' check (portfolio = '' or portfolio ~ '^https?://'),
+    location text not null default '' check (length(location) <= 160),
     joining_date date,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()

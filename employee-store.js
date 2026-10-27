@@ -7,7 +7,7 @@
         auth: { storageKey: 'employee-directory-admin', persistSession: true, autoRefreshToken: true }
     });
     const bucket = 'employee-photos';
-    const columns = 'id,name,title,department,email,image,bio,skills,linkedin,github,portfolio,joining_date,created_at,updated_at';
+    const columns = 'id,name,title,department,location,email,image,bio,skills,linkedin,github,portfolio,joining_date,created_at,updated_at';
     const photoPrefix = `${config.url}/storage/v1/object/public/${bucket}/`;
 
     function check(result) {
@@ -25,7 +25,7 @@
     }
     function cleanEmployee(input) {
         const result = {};
-        for (const field of ['name', 'title', 'department', 'email', 'bio']) {
+        for (const field of ['name', 'title', 'department', 'location', 'email', 'bio']) {
             result[field] = String(input[field] || '').trim();
         }
         if (!result.name || !result.title || !result.department || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result.email)) {
@@ -34,6 +34,7 @@
         for (const field of ['image', 'linkedin', 'github', 'portfolio']) result[field] = safeUrl(String(input[field] || '').trim());
         result.skills = (Array.isArray(input.skills) ? input.skills : []).map(s => String(s).trim()).filter(Boolean);
         if (result.skills.length > 20 || result.skills.some(s => s.length > 80)) throw new Error('Use up to 20 skills, with at most 80 characters each.');
+        if (result.location.length > 160) throw new Error('Use at most 160 characters for location.');
         result.joining_date = input.joiningDate || null;
         result.updated_at = new Date().toISOString();
         return result;
