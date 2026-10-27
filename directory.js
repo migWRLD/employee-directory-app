@@ -70,12 +70,72 @@ function createStatisticsSection() {
     return section;
 }
 
+// Count up when real statistics enter view; keep the final value available to assistive technology.
+const statisticMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const statisticCounters = new Map();
+const statisticObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+    entries.forEach(entry => { if (entry.isIntersecting) { statisticObserver.unobserve(entry.target); runStatisticCounter(entry.target); } });
+}, { threshold: 0.25 }) : null;
+function runStatisticCounter(element) {
+    const state = statisticCounters.get(element);
+    if (!state || state.started) return;
+    state.started = true;
+    if (statisticMotion.matches || typeof element.animate !== 'function' || state.value === 0) {
+        element.textContent = String(state.value); return;
+    }
+    element.replaceChildren();
+    state.animations = [];
+    const digits = String(state.value).split('');
+    digits.forEach((digit, index) => {
+        const wheel = document.createElement('span'); wheel.className = 'stat-digit'; wheel.setAttribute('aria-hidden', 'true');
+        const strip = document.createElement('span'); strip.className = 'stat-digit-strip';
+        const steps = 20 + Number(digit);
+        for (let step = 0; step <= steps; step++) {
+            const cell = document.createElement('span'); cell.textContent = String(step % 10); strip.append(cell);
+        }
+        wheel.append(strip); element.append(wheel);
+        const animation = strip.animate([
+            { transform: 'translateY(0)' },
+            { transform: 'translateY(-' + (steps * 1.2) + 'em)' }
+        ], { duration: 1700 + index * 120, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+        state.animations.push(animation);
+    });
+    Promise.all(state.animations.map(animation => animation.finished)).then(() => {
+        if (statisticCounters.get(element) !== state) return;
+        element.textContent = String(state.value);
+        state.animations.forEach(animation => animation.cancel()); state.animations = [];
+    }).catch(() => { /* A changed value or motion preference cancels the old wheels. */ });
+}
+function setStatistic(id, value, description) {
+    const element = document.getElementById(id);
+    const previous = statisticCounters.get(element);
+    if (previous && previous.value === value) return;
+    previous?.animations?.forEach(animation => animation.cancel());
+    statisticObserver?.unobserve(element);
+    element.textContent = String(value);
+    element.setAttribute('aria-label', description || String(value));
+    element.setAttribute('aria-live', 'off');
+    const state = { value, started: false, frame: null };
+    statisticCounters.set(element, state);
+    if (typeof value !== 'number') { state.started = true; return; }
+    if (statisticMotion.matches || !statisticObserver) runStatisticCounter(element);
+    else statisticObserver.observe(element);
+}
+statisticMotion.addEventListener?.('change', event => {
+    if (!event.matches) return;
+    statisticCounters.forEach((state, element) => {
+        state.animations?.forEach(animation => animation.cancel());
+        state.frame = null; state.started = true; element.textContent = String(state.value);
+        statisticObserver?.unobserve(element);
+    });
+});
+
 function updateStatistics() {
     createStatisticsSection();
     const countDistinct = key => new Set(employees.map(e => String(e[key] || '').trim()).filter(Boolean)).size;
-    document.querySelector('#total-employees').textContent = employees.length;
-    document.querySelector('#total-departments').textContent = countDistinct('department');
-    document.querySelector('#total-roles').textContent = countDistinct('title');
+    setStatistic('total-employees', employees.length, employees.length + ' total employees');
+    setStatistic('total-departments', countDistinct('department'), countDistinct('department') + ' departments');
+    setStatistic('total-roles', countDistinct('title'), countDistinct('title') + ' roles');
     const now = new Date();
     const knownDates = employees.map(employee => {
         const value = employee.joiningDate || employee.joinedDate || employee.startDate;
@@ -86,7 +146,7 @@ function updateStatistics() {
     }).filter(Boolean);
     const count = knownDates.filter(date => date <= now && date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()).length;
     const stat = document.querySelector('#new-employees');
-    stat.textContent = knownDates.length ? count : '—';
+    setStatistic('new-employees', knownDates.length ? count : '—');
     stat.title = knownDates.length ? 'Based on available joining dates' : 'Joining dates have not been provided';
     stat.setAttribute('aria-label', knownDates.length ? count + ' new employees this month, based on available joining dates' : 'Joining dates unavailable');
 }
@@ -1333,6 +1393,7 @@ window.addEventListener('keydown', event => {
     if (searchInput.closest('[hidden]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
 
 
 
