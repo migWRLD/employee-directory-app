@@ -53,3 +53,16 @@ body.darkMode .employee-card{background:var(--panel);color:var(--ink)}body.darkM
 .departments-section[data-page]{margin-top:0}
 .about-section[data-page],.contact-section[data-page]{min-height:260px}
 .about-section h2,.contact-section h2{font-size:22px;margin-bottom:12px}
+
+
+/* Rainbow outline action, adapted for the directory's native link. */
+.add-teammate{position:relative;isolation:isolate;border:2px solid transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,linear-gradient(90deg,#ff75c3,#ffa647,#ffe83f,#9fff5b,#70e2ff,#a88bff,#ff75c3) border-box;background-size:100% 100%,200% 100%;color:var(--ink);animation:teammate-rainbow 4s linear infinite;transition:transform .2s,box-shadow .2s;box-shadow:0 2px 8px #6d4aff12}
+.add-teammate:hover{filter:none;transform:translateY(-2px);box-shadow:0 4px 16px #8662dd35}
+.add-teammate:active{transform:translateY(0)}
+.add-teammate:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
+.stat-card h2{font-variant-numeric:tabular-nums;min-width:2ch}
+@keyframes teammate-rainbow{to{background-position:0 0,200% 0}}
+@media(prefers-reduced-motion:reduce){.add-teammate{animation:none;transition:none}.add-teammate:hover{transform:none}}
+
+.stat-digit{display:inline-block;height:1.2em;line-height:1.2;overflow:hidden;vertical-align:bottom;mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
+.stat-digit-strip{display:flex;flex-direction:column;will-change:transform}.stat-digit-strip>span{display:block;flex:0 0 1.2em;height:1.2em;line-height:1.2;text-align:center}
