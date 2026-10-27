@@ -7,6 +7,28 @@ const employeeList = document.querySelector('#employee-list');
 const departmentGrid = document.querySelector('#department-grid');
 const departmentMembers = document.querySelector('#department-members');
 
+// Keep the existing logo image and directory link, with a small pointer tilt.
+const peopleLogo = document.querySelector('.people-logo');
+const logoMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+if (peopleLogo) {
+    const resetLogo = () => {
+        peopleLogo.style.removeProperty('--logo-x');
+        peopleLogo.style.removeProperty('--logo-y');
+    };
+    peopleLogo.addEventListener('pointermove', event => {
+        if (logoMotion.matches || event.pointerType !== 'mouse') return;
+        const bounds = peopleLogo.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        peopleLogo.style.setProperty('--logo-x', `${-y * 10}deg`);
+        peopleLogo.style.setProperty('--logo-y', `${x * 12}deg`);
+    });
+    peopleLogo.addEventListener('pointerleave', resetLogo);
+    peopleLogo.addEventListener('pointercancel', resetLogo);
+    peopleLogo.addEventListener('blur', resetLogo);
+    logoMotion.addEventListener('change', resetLogo);
+}
+
 let activeDepartment = null;
 
 let employees = [];

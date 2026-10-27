@@ -66,3 +66,10 @@ body.darkMode .employee-card{background:var(--panel);color:var(--ink)}body.darkM
 
 .stat-digit{display:inline-block;height:1.2em;line-height:1.2;overflow:hidden;vertical-align:bottom;mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
 .stat-digit-strip{display:flex;flex-direction:column;will-change:transform}.stat-digit-strip>span{display:block;flex:0 0 1.2em;height:1.2em;line-height:1.2;text-align:center}
+
+/* Interactive image logo: retain its original artwork and clickable area. */
+.people-logo{perspective:700px}
+.people-logo img{transform:rotateX(var(--logo-x,0deg)) rotateY(var(--logo-y,0deg));transition:transform .25s ease,filter .25s ease}
+@media(hover:hover) and (pointer:fine){.people-logo:hover img{transform:rotateX(var(--logo-x,0deg)) rotateY(var(--logo-y,0deg)) scale(1.035);filter:drop-shadow(0 4px 5px #08274725)}}
+.people-logo:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.people-logo img,.people-logo:hover img{transform:none;filter:none;transition:none}}
