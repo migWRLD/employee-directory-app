@@ -38,3 +38,10 @@ test('editing refreshes preview and saving preserves optional fields',async()=>{
  const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;d.querySelector('#admin-employees button').click();assert.match(d.getElementById('card-name').textContent,/<img/);assert.equal(d.getElementById('save-draft').hidden,true);
  assert.equal(d.getElementById('employee-location').value,'San Antonio, TX (CT)');d.getElementById('employee-location').value='Los Angeles, CA (PT)';d.getElementById('employee-location').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(d.getElementById('card-location').textContent,'Los Angeles, CA (PT)');d.getElementById('employee-bio').value='Bio';d.getElementById('employee-linkedin').value='https://linkedin.com/in/example';d.getElementById('employee-joiningDate').value='2026-10-01';d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().location,'Los Angeles, CA (PT)');assert.equal(getSaved().bio,'Bio');assert.equal(getSaved().joiningDate,'2026-10-01');assert.equal(getSaved().linkedin,'https://linkedin.com/in/example');assert.equal(d.getElementById('card-name').textContent,'Your new teammate');w.close();
 });
+
+test('theme icon button toggles and remembers the selected theme',async()=>{
+ const {w}=await setup({id:'admin',email:'owner@example.com'});const button=w.document.getElementById('admin-theme');
+ assert.equal(button.getAttribute('aria-pressed'),'false');button.click();
+ assert.equal(w.document.body.classList.contains('darkMode'),true);assert.equal(button.getAttribute('aria-label'),'Switch to light mode');assert.equal(w.localStorage.getItem('darkMode'),'enabled');
+ button.click();assert.equal(w.document.body.classList.contains('darkMode'),false);assert.equal(button.getAttribute('aria-label'),'Switch to dark mode');w.close();
+});

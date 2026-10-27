@@ -198,7 +198,8 @@
     const theme = $('admin-theme');
     function applyTheme(dark) {
         document.body.classList.toggle('darkMode', dark); theme.setAttribute('aria-pressed', String(dark));
-        $('theme-label').textContent = dark ? 'Day mode' : 'Night mode';
+        theme.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
+        theme.setAttribute('aria-label', theme.title);
     }
     let savedTheme = null;
     try { savedTheme = localStorage.getItem('darkMode'); } catch {}
