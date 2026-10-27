@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="directory.css?v=sky-banner-12">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
   <link rel="stylesheet" href="kinetic-nav.css?v=kinetic-sentence-14">
+  <link rel="stylesheet" href="liquid-navigation.css?v=liquid-nav-15">
 </head>
 <body class="directory-page">
   <a class="skip-link" href="#directory">Skip to employee directory</a>
@@ -18,10 +19,13 @@
     <div class="header-container">
       <a class="logo people-logo" href="#directory" aria-label="The People directory"><img src="the-people-logo.png" alt="The People" width="1960" height="816"></a>
       <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="primary-navigation" aria-expanded="false">☰</button>
-      <nav class="nav-links mono-navigation" id="primary-navigation" aria-label="Main navigation">
+      <nav class="nav-links liquid-navigation" id="primary-navigation" aria-label="Main navigation">
+        <svg class="liquid-defs" aria-hidden="true" width="0" height="0"><defs><filter id="directory-nav-goo" x="-30%" y="-70%" width="160%" height="240%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"/></filter></defs></svg><span class="liquid-layer" aria-hidden="true"><span class="liquid-pill"></span></span>
         <a href="#directory">Directory</a><a href="#Departments">Departments</a><a href="#About">About</a><a href="#Contact">Contact</a>
+        <span class="liquid-divider" aria-hidden="true"></span>
+        <button id="darkModeToggle" class="theme-changer" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="changer-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="changer-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg></button>
       </nav>
-      <button id="darkModeToggle" class="theme-changer" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="changer-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="changer-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg></button>
+
     </div>
   </header>
   <main class="page-shell" id="page-content">
@@ -77,6 +81,7 @@
   <script src="employee-store.js?v=location-10"></script>
   <script src="directory.js?v=theme-11"></script>
   <script src="kinetic-text.js?v=kinetic-sentence-14"></script>
+  <script src="liquid-navigation.js?v=liquid-nav-15"></script>
 </body>
 </html>
 
