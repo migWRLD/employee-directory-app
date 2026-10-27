@@ -6,7 +6,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 async function setup(admin, failSave=false) {
  const dom = new JSDOM(fs.readFileSync('admin.html','utf8'), {runScripts:'outside-only',url:'https://example.com/admin.html'});
  const w=dom.window; let saved;
- w.EmployeeStore={getAdmin:async()=>admin,list:async()=>[{id:'1',name:'<img src=x onerror=alert(1)>',title:'Developer',department:'Engineering',skills:[],email:'test@example.com',image:''}],onAuthChange(){},save:async input=>{if(failSave)throw Error('Connection failed');saved=input;return {...input,id:'2'};},removePhotoIfUnused:async()=>{}};
+ w.EmployeeStore={getAdmin:async()=>admin,list:async()=>[{id:'1',name:'<img src=x onerror=alert(1)>',title:'Developer',department:'Engineering',location:'San Antonio, TX (CT)',skills:[],email:'test@example.com',image:''}],onAuthChange(){},save:async input=>{if(failSave)throw Error('Connection failed');saved=input;return {...input,id:'2'};},removePhotoIfUnused:async()=>{}};
  w.eval(fs.readFileSync('admin.js','utf8')); await tick();
  return {w,getSaved:()=>saved};
 }
@@ -36,5 +36,5 @@ test('local draft is scoped to admin and restoring does not publish',async()=>{
 });
 test('editing refreshes preview and saving preserves optional fields',async()=>{
  const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;d.querySelector('#admin-employees button').click();assert.match(d.getElementById('card-name').textContent,/<img/);assert.equal(d.getElementById('save-draft').hidden,true);
- d.getElementById('employee-bio').value='Bio';d.getElementById('employee-linkedin').value='https://linkedin.com/in/example';d.getElementById('employee-joiningDate').value='2026-10-01';d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().bio,'Bio');assert.equal(getSaved().joiningDate,'2026-10-01');assert.equal(getSaved().linkedin,'https://linkedin.com/in/example');assert.equal(d.getElementById('card-name').textContent,'Your new teammate');w.close();
+ assert.equal(d.getElementById('employee-location').value,'San Antonio, TX (CT)');d.getElementById('employee-location').value='Los Angeles, CA (PT)';d.getElementById('employee-location').dispatchEvent(new w.Event('input',{bubbles:true}));assert.equal(d.getElementById('card-location').textContent,'Los Angeles, CA (PT)');d.getElementById('employee-bio').value='Bio';d.getElementById('employee-linkedin').value='https://linkedin.com/in/example';d.getElementById('employee-joiningDate').value='2026-10-01';d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().location,'Los Angeles, CA (PT)');assert.equal(getSaved().bio,'Bio');assert.equal(getSaved().joiningDate,'2026-10-01');assert.equal(getSaved().linkedin,'https://linkedin.com/in/example');assert.equal(d.getElementById('card-name').textContent,'Your new teammate');w.close();
 });

@@ -2,7 +2,7 @@
     'use strict';
     const store = window.EmployeeStore;
     const $ = id => document.getElementById(id);
-    const fields = ['name', 'title', 'department', 'email', 'bio', 'skills', 'linkedin', 'github', 'portfolio', 'joiningDate'];
+    const fields = ['name', 'title', 'department', 'location', 'email', 'bio', 'skills', 'linkedin', 'github', 'portfolio', 'joiningDate'];
     let employees = [];
     let editing = null;
     let pendingDelete = null;
@@ -120,6 +120,7 @@
         $('card-title').textContent = $('employee-title').value.trim() || 'Role / job title';
         $('card-department').textContent = $('employee-department').value.trim() || 'Department';
         $('card-email').textContent = $('employee-email').value.trim() || 'Public email';
+        $('card-location').textContent = $('employee-location').value.trim() || 'Location not listed';
         $('card-initials').textContent = initials;
         $('upload-initials').textContent = initials === '?' ? '+' : initials;
         const photo = $('photo-preview');
