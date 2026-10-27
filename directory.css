@@ -73,3 +73,14 @@ body.darkMode .employee-card{background:var(--panel);color:var(--ink)}body.darkM
 @media(hover:hover) and (pointer:fine){.people-logo:hover img{transform:rotateX(var(--logo-x,0deg)) rotateY(var(--logo-y,0deg)) scale(1.035);filter:drop-shadow(0 4px 5px #08274725)}}
 .people-logo:focus-visible{outline:3px solid var(--primary);outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.people-logo img,.people-logo:hover img{transform:none;filter:none;transition:none}}
+
+/* Directory banner: the existing Los Angeles photo with readable foreground text. */
+.hero-section[data-page="directory"]{
+ background-color:#17243f;
+ background-image:linear-gradient(90deg,rgba(10,18,38,.78),rgba(10,18,38,.62)),url("skyphoto2.png");
+ background-size:cover;
+ background-position:center 38%;
+ background-repeat:no-repeat;
+}
+.hero-section[data-page="directory"] .hero-label,
+.hero-section[data-page="directory"] .hero-description{color:#fff}
