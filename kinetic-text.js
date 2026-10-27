@@ -1,56 +1,34 @@
-// Kinetic Text Swapper-style 3D word roll; only the search terms move.
+// Roll the five search terms in place without changing the full sentence.
 (() => {
     const intro = document.querySelector('.search-intro');
     if (!intro) return;
-    const word = intro.querySelector('.kinetic-word');
-    const pause = intro.querySelector('.kinetic-pause');
-    const terms = ['name', 'role', 'email', 'department', 'skill'];
+    const words = [...intro.querySelectorAll('.kinetic-word')];
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let index = 0;
     let timer = null;
     let animation = null;
-    let paused = false;
+    let index = 0;
     let hovered = false;
     let visible = false;
-    let version = 0;
     function stop() {
         clearInterval(timer);
         timer = null;
-        version++;
         if (animation) animation.cancel();
         animation = null;
     }
-    async function swap() {
-        const current = version;
+    function roll() {
+        const word = words[index];
+        index = (index + 1) % words.length;
         animation = word.animate([
-            { opacity: 1, transform: 'rotateX(0deg) translateY(0)' },
-            { opacity: 0, transform: 'rotateX(85deg) translateY(-.7em)' }
-        ], { duration: 260, easing: 'ease-in', fill: 'forwards' });
-        try { await animation.finished; } catch { return; }
-        if (current !== version) return;
-        animation.cancel();
-        word.textContent = terms[index = (index + 1) % terms.length];
-        animation = word.animate([
-            { opacity: 0, transform: 'rotateX(-85deg) translateY(.7em)' },
-            { opacity: 1, transform: 'rotateX(0deg) translateY(0)' }
-        ], { duration: 420, easing: 'cubic-bezier(.16,1,.3,1)' });
-        try { await animation.finished; } catch { return; }
-        if (current === version) animation = null;
+            { opacity: 1, transform: 'perspective(600px) rotateX(0deg) translateY(0)' },
+            { opacity: 0, transform: 'perspective(600px) rotateX(85deg) translateY(-.35em)', offset: 0.45 },
+            { opacity: 0, transform: 'perspective(600px) rotateX(-85deg) translateY(.35em)', offset: 0.46 },
+            { opacity: 1, transform: 'perspective(600px) rotateX(0deg) translateY(0)' }
+        ], { duration: 680, easing: 'cubic-bezier(.22,.7,.28,1)' });
     }
     function sync() {
         stop();
-        const enabled = !motion.matches && typeof word.animate === 'function';
-        intro.classList.toggle('kinetic-ready', enabled);
-        pause.hidden = !enabled;
-        if (enabled && visible && !paused && !hovered && !document.hidden) timer = setInterval(swap, 2500);
+        if (words.length && !motion.matches && typeof words[0].animate === 'function' && visible && !hovered && !document.hidden) timer = setInterval(roll, 2500);
     }
-    pause.addEventListener('click', () => {
-        paused = !paused;
-        pause.setAttribute('aria-pressed', String(paused));
-        pause.setAttribute('aria-label', (paused ? 'Resume' : 'Pause') + ' rotating search terms');
-        pause.firstElementChild.textContent = paused ? '▶' : 'Ⅱ';
-        sync();
-    });
     intro.addEventListener('mouseenter', () => { hovered = true; sync(); });
     intro.addEventListener('mouseleave', () => { hovered = false; sync(); });
     document.addEventListener('visibilitychange', sync);
