@@ -19,3 +19,34 @@ body.darkMode #primary-navigation .liquid-divider{background:#484848}
 @media(max-width:850px){#primary-navigation.liquid-navigation{border-radius:24px;max-width:100%;justify-content:center;flex-wrap:wrap}#primary-navigation.liquid-navigation.open{display:flex}#primary-navigation.liquid-navigation>a{padding:10px 14px}}
 @media(max-width:500px){#primary-navigation.liquid-navigation{gap:2px;padding:6px}#primary-navigation.liquid-navigation>a{padding:10px 12px;flex:1 1 auto}#primary-navigation #darkModeToggle{margin:0}}
 @media(prefers-reduced-motion:reduce){.liquid-pill,#primary-navigation.liquid-navigation>a{transition:none}.liquid-layer{filter:none}}
+
+/* Slimmer navigation and matching theme icon */
+#primary-navigation.liquid-navigation {
+  padding: 5px;
+  gap: 4px;
+}
+
+#primary-navigation.liquid-navigation > a {
+  min-height: 32px;
+  padding: 6px 12px;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+#primary-navigation #darkModeToggle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 5px;
+  margin: 0;
+}
+
+#primary-navigation #darkModeToggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+#primary-navigation .liquid-divider {
+  height: 20px;
+}
