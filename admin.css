@@ -28,3 +28,7 @@ body.darkMode{color-scheme:dark;--page:#101522;--panel:#1a2233;--soft:#232d43;--
 #people-particles-toggle {
   display: none !important;
 }
+#people-particles-toggle,
+.people-hero-action {
+  display: none !important;
+}
