@@ -1,176 +1,163 @@
-# 👥 Employee Directory App
+# The People — Employee Directory
 
-A simple and interactive **Employee Directory App** created as part of the **LA Tech Rising Internship Program**.
+An employee directory built by LA Tech Rising interns with project guidance from Omid Ahmadi. The app helps people find teammates, explore departments, and connect through public profiles.
 
-The project gives interns hands-on experience working together on a real software project using HTML, CSS, JavaScript, GitHub, Jira, and Slack.
+[Open the live website](https://siromidahmadi.github.io/employee-directory-app/)
 
-## 🌐 Live Website
+## Pages
 
-👉 https://siromidahmadi.github.io/employee-directory-app/
+| Page | What it provides |
+| --- | --- |
+| [Directory](https://siromidahmadi.github.io/employee-directory-app/index.html#directory) | Default view with employee cards, search, filters, statistics, and a table view. |
+| [Departments](https://siromidahmadi.github.io/employee-directory-app/index.html#Departments) | Department cards, member counts, and expandable team information. |
+| [About](https://siromidahmadi.github.io/employee-directory-app/index.html#About) | Project introduction and team values. |
+| [Contact](https://siromidahmadi.github.io/employee-directory-app/index.html#Contact) | Project contact information and LinkedIn link. |
+| [Add Teammate](https://siromidahmadi.github.io/employee-directory-app/admin.html) | Particle introduction, approved-admin sign-in, and teammate management. Scroll down to reach the workspace. |
 
-## 📌 About the Project
+Directory, Departments, About, and Contact are separate hash-selected views in `index.html`. Add Teammate uses `admin.html`.
 
-The Employee Directory App allows users to view team members, search for employees, and see basic employee information in a clean and responsive layout.
+## Current features
 
-Throughout the project, interns contribute new features, improve the design, fix issues, and practice working with GitHub branches and pull requests.
+### Find and explore teammates
 
-## ✨ Features
+- Search by name, role, email, department, or skill.
+- Combine search with a department filter and quick department pills.
+- Sort names A–Z or Z–A, clear filters, and switch between Grid and Table.
+- View employee photos or initials, role and department information, location, and up to three skill badges on each card.
+- Open a profile with Overview, Contact, Skills, and Projects tabs. Empty project lists show a placeholder.
+- Use email links, copy-email controls, and available professional profile links.
+- Save individual cards with browser-local bookmarks.
+- See total employees, departments, roles, and new employees this month. The last figure uses available joining dates.
+- See a compact local clock beneath a card's location, using its saved time zone where provided.
 
-- 👤 Employee profile cards
-- 🔎 Employee search
-- 🏢 Department information
-- 🏷️ Employee badges
-- 📸 Profile photos
-- 📱 Responsive design
-- 🎨 Modern UI styling
-- ✨ Simple micro-interactions
+### Appearance and interactions
 
-## 🛠️ Technologies
+- The People branding and a Los Angeles photo banner.
+- Compact liquid-style navigation with an integrated sun/moon theme control.
+- Saved light/dark preference, rainbow-outline Add Teammate link, rolling statistics and search terms, and card hover effects.
+- Responsive styles, keyboard focus states, and reduced-motion handling in supported interactions.
+- A canvas particle introduction on the Add Teammate page. Its current implementation is inline in `admin.html`.
 
-- HTML5
-- CSS3
-- JavaScript
-- Git & GitHub
-- GitHub Pages
-- Visual Studio Code
-- Live Server
-- Jira
-- Slack
+### Admin management
 
-## 🚀 How to Run the Project
+Approved admins can add, edit, and remove teammates. The form includes:
+
+- Name, public email, role, and department.
+- Photo upload: JPG, PNG, or WebP, up to 2 MB.
+- City/location, country/territory, state/province/region, and named time zone.
+- Joining date, bio, skills, LinkedIn, GitHub, and portfolio.
+- Live profile preview, required-field readiness, and a browser-local draft.
+
+Country choices cover 249 ISO countries/territories. City suggestions are a curated international list, not an exhaustive worldwide address search. Other cities and regions can be entered manually. Select the appropriate time zone when a city is not suggested; named zones let the browser apply its local time-zone rules.
+
+Saved profiles are shared through Supabase. Other visitors see updates when they load or refresh the directory. Drafts, bookmarks, view preferences, and theme preferences stay in the current browser.
+
+## Technology
+
+- HTML, CSS, and vanilla JavaScript.
+- Supabase Database, Authentication, and Storage.
+- Pinned Supabase browser SDK: `2.118.0`.
+- GitHub Pages for static hosting.
+- Node.js and jsdom for the existing development checks.
+
+The deployed website has no React, TypeScript, Tailwind, or shadcn dependency and needs no frontend build step. Reference-inspired UI effects are implemented in native web code.
+
+## Run locally
 
 1. Clone the repository:
 
-   `git clone https://github.com/siromidahmadi/employee-directory-app.git`
+   ```bash
+   git clone https://github.com/siromidahmadi/employee-directory-app.git
+   cd employee-directory-app
+   ```
 
-2. Open the project folder in **Visual Studio Code**.
+2. Serve the project over HTTP. Use VS Code Live Server, or run:
 
-3. Open `index.html`.
+   ```bash
+   python -m http.server 8000
+   ```
 
-4. Right-click the file and select **Open with Live Server**.
+3. Open [http://localhost:8000](http://localhost:8000).
 
-You can also open `index.html` directly in your browser.
+The public directory needs access to the configured Supabase project. Local changes to HTML, CSS, or JavaScript do not publish themselves to GitHub Pages. Saving an employee through the configured admin page writes to the shared database, even when the page is served locally.
 
-## 🌿 GitHub Workflow
+## Project files
 
-For new changes, create a separate branch instead of editing the main branch directly.
+| File or folder | Purpose |
+| --- | --- |
+| `index.html` | Public page structure and navigation views. |
+| `directory.js`, `directory.css` | Current Directory rendering, search, filters, profiles, department views, and styles. |
+| `admin.html`, `admin.js`, `admin.css` | Particle introduction, login, form, preview, and employee management. |
+| `employee-store.js` | Shared database, authentication, and photo-storage access. |
+| `supabase-config.js` | Browser Supabase URL and publishable key. |
+| `supabase-2.118.0.js`, `SUPABASE-LICENSE` | Pinned browser SDK and its license. |
+| `location-picker.js`, `location-picker.css` | Country, region, city-suggestion, and time-zone controls. |
+| `card-local-time.js` | Local-time formatting and clock updates. |
+| `liquid-navigation.js`, `liquid-navigation.css` | Moving navigation highlight and compact bar styles. |
+| `theme-changer.css` | Sun/moon icon-button styles. |
+| `kinetic-text.js`, `kinetic-nav.css` | Rolling search-term effect and related styles; the CSS also retains earlier MonoNav rules. |
+| `img/`, `the-people-logo.png`, `skyphoto2.png` | Local photos, icons, logo, and banner image. |
+| `data/employees.sample.json` | Reference employee data; not the live database. |
+| `employee-directory.sql` | Database setup, constraints, access policies, and storage configuration. |
+| `add-employee-location.sql`, `employee-worldwide-location.sql` | Records of the applied location-related database changes. |
+| `admin.test.cjs`, `departments.test.cjs` | Existing admin and department tests. |
+| `script.js` | Legacy code retained because the department tests and check command still reference it. The public page loads `directory.js`. |
+| `docs/CHANGELOG.md` | Earlier development notes. |
 
-Example:
+The duplicate project-copy folder and identified unused assets have been removed. Earlier versions remain in Git history.
 
-`git checkout -b feature-name`
+## Data and administrator access
 
-After completing your work:
+Employee profiles and photos are public. Only enter information intended for the public directory.
 
-`git add .`
+- Employee records are stored in the `employees` table.
+- Approved administrators are listed in `directory_admins`.
+- Photos use the `employee-photos` storage bucket.
+- Database row-level security restricts writes to approved admins.
+- Updates and deletes use the saved `updated_at` value to detect stale records.
 
-`git commit -m "Describe your changes"`
+For an existing deployment, use its configured backend. The SQL changes in this repository have already been applied to the connected project; do not rerun the full schema or sample backfills against an existing database without reviewing them.
 
-`git push origin feature-name`
-
-Then create a **Pull Request** on GitHub.
-
-After the Pull Request is reviewed and approved, it can be merged into the main branch.
-
-## 👨‍💻 Internship Team
-
-This project is developed collaboratively by interns participating in the **LA Tech Rising Internship Program**.
-
-Team members work on different areas such as:
-
-- UI design
-- Employee cards
-- Search functionality
-- Profile photos
-- Employee badges
-- Responsive design
-- Testing and bug fixes
-- Documentation
-
-## 📅 Project Structure
-
-The project is developed over multiple weeks.
-
-Each week introduces new tasks and improvements while giving interns experience with:
-
-**Planning → Jira Tasks → Coding → Git Branches → Pull Requests → Code Review → Merge → Deployment**
-
-## 🎯 Project Goals
-
-The main goal is not only to build an Employee Directory App, but also to learn how a software development team works together.
-
-Interns gain practical experience with:
-
-- Git and GitHub
-- Branching
-- Pull Requests
-- Merge conflicts
-- Code reviews
-- Jira tickets
-- Team communication
-- Front-end development
-- Testing
-- GitHub Pages deployment
-
-## 🤝 Contributing
-
-Before starting a task:
-
-1. Check your assigned Jira ticket.
-2. Pull the latest version of the project.
-3. Create a new branch.
-4. Complete your assigned task.
-5. Test your changes locally.
-6. Commit and push your work.
-7. Open a Pull Request.
-8. Wait for review before merging.
-
-Please avoid making changes directly to the `main` branch.
-
-## 📚 LA Tech Rising Internship Project
-
-This repository is used as a collaborative learning project for the **LA Tech Rising Internship Program**.
-
-The project is designed to give interns practical experience working with real development tools, workflows, teamwork, and project management.
-
----
-
-### Employee Directory App
-
-**Build. Learn. Collaborate. Improve.**
-
-🌐 Live App: https://siromidahmadi.github.io/employee-directory-app/
-
-
-## Shared employee management
-
-The public directory reads from Supabase. Use **Admin login** to add, edit, or remove employees and upload JPG, PNG, or WebP photos up to 2 MB. Saved changes appear on other devices after loading or refreshing the directory. All directory fields and photos are public; enter information intended for the public directory.
-
-The existing six employee profiles have been imported. `data/employees.sample.json` is the original reference data, not the live database.
-
-### One-time administrator setup
-
-1. In the Employee App Supabase dashboard, open Authentication → Users → Add user → Create new user. Enter your own email and choose your password privately.
-2. Copy that user's UUID. In Supabase SQL Editor, run the following with that exact UUID:
+To approve an administrator, the project owner creates an authentication user in Supabase and adds that user's UUID:
 
 ```sql
 insert into public.directory_admins (user_id)
-values ('YOUR_AUTH_USER_UUID') on conflict do nothing;
+values ('YOUR_AUTH_USER_UUID')
+on conflict do nothing;
 ```
 
-3. Open `admin.html` and sign in. Only users explicitly listed in `directory_admins` can write employee records or photos. There is no public admin registration. To revoke access, remove the user's membership through Supabase. Never put a service-role/secret key in this repository; `supabase-config.js` contains only the browser publishable key.
+Open `admin.html` and sign in with that approved account. There is no public admin registration. Remove the membership in `directory_admins` to revoke admin authorization.
 
-### Development and verification
+The browser publishable key is expected in the client configuration. Never commit a service-role key, secret key, database password, or personal login credentials.
 
-Serve the repository with a local static web server. Run `npm ci`, `npm run check`, and `npm test`. The pinned Supabase browser SDK and its license are committed, so GitHub Pages requires no build step. Database policies and constraints are documented in `employee-directory.sql` (already applied to the connected project). Update/delete operations detect stale records instead of silently overwriting another session's changes.
+## Development checks
 
+Install development dependencies and run the existing checks:
 
-## Current source files and cleanup
+```bash
+npm ci
+npm run check
+npm test
+```
 
-- `index.html` loads `directory.js` and `directory.css`, plus the navigation, clock, theme, and text-animation files referenced in its HTML.
-- `admin.html` uses `admin.js`, `admin.css`, and the location picker. Its current hero animation is inline in `admin.html`.
-- `employee-store.js` and `supabase-config.js` connect both pages to the shared database.
-- `data/employees.sample.json` is reference data, not the live database.
-- `docs/CHANGELOG.md` preserves the earlier development notes.
-- `script.js` is retained temporarily because `departments.test.cjs` and the existing check command still reference it. Update and run those tests against `directory.js` before removing it.
+**Current coverage limitation:** the department tests execute legacy `script.js`, while the deployed page uses `directory.js`. The syntax-check command also covers only its listed files. Passing these commands does not verify every current feature; update their targets before relying on them for release readiness.
 
-The obsolete copied project folder, unused standalone hero script, legacy stylesheet, unused GIFs/theme icons, and macOS metadata have been removed from the working tree. Their earlier versions remain in Git history.
+Before merging, also review the current Directory search/filter combinations, profile links, empty states, navigation, phone layout, keyboard interactions, themes, clocks, and admin form behavior. Use an isolated backend for disposable test records.
+
+## Contributing
+
+1. Check your Jira assignment and coordinate shared markup/data fields in Slack.
+2. Pull the latest `main` and create a branch for your task.
+3. Keep changes focused on your assigned feature.
+4. Review your diff and complete the relevant checks.
+5. Stage only the intended files, commit, and push your branch.
+6. Open a pull request with the change summary and verification notes.
+7. Share the PR in Slack and wait for review before merging.
+
+Avoid committing passwords, local environment files, editor metadata, or another copy of the project folder.
+
+## Work still in progress
+
+The detailed Week 6 Departments & Teams design remains an implementation target. Its expanded team search, division filter, Create Team flow, openings details, guild proposals/membership, and Quick Invite are not all implemented in the current page. Treat task images and planning notes as design references, not a list of completed features.
+
+GitHub Pages deployment success confirms publishing completed; it does not replace functional or visual testing.
