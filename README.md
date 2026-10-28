@@ -145,7 +145,7 @@ The project is designed to give interns practical experience working with real d
 
 The public directory reads from Supabase. Use **Admin login** to add, edit, or remove employees and upload JPG, PNG, or WebP photos up to 2 MB. Saved changes appear on other devices after loading or refreshing the directory. All directory fields and photos are public; enter information intended for the public directory.
 
-The existing six employee profiles have been imported. `employees.json` is the original reference data, not the live database.
+The existing six employee profiles have been imported. `data/employees.sample.json` is the original reference data, not the live database.
 
 ### One-time administrator setup
 
@@ -162,3 +162,15 @@ values ('YOUR_AUTH_USER_UUID') on conflict do nothing;
 ### Development and verification
 
 Serve the repository with a local static web server. Run `npm ci`, `npm run check`, and `npm test`. The pinned Supabase browser SDK and its license are committed, so GitHub Pages requires no build step. Database policies and constraints are documented in `employee-directory.sql` (already applied to the connected project). Update/delete operations detect stale records instead of silently overwriting another session's changes.
+
+
+## Current source files and cleanup
+
+- `index.html` loads `directory.js` and `directory.css`, plus the navigation, clock, theme, and text-animation files referenced in its HTML.
+- `admin.html` uses `admin.js`, `admin.css`, and the location picker. Its current hero animation is inline in `admin.html`.
+- `employee-store.js` and `supabase-config.js` connect both pages to the shared database.
+- `data/employees.sample.json` is reference data, not the live database.
+- `docs/CHANGELOG.md` preserves the earlier development notes.
+- `script.js` is retained temporarily because `departments.test.cjs` and the existing check command still reference it. Update and run those tests against `directory.js` before removing it.
+
+The obsolete copied project folder, unused standalone hero script, legacy stylesheet, unused GIFs/theme icons, and macOS metadata have been removed from the working tree. Their earlier versions remain in Git history.
