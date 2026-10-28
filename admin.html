@@ -7,7 +7,7 @@
   <title>Add Teammate | The People</title>
   <link rel="icon" type="image/png" href="the-people-logo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="admin.css?v=teammate-7">
+  <link rel="stylesheet" href="admin.css?v=particle-hero-1">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
 <link rel="stylesheet" href="location-picker.css?v=world-location-17">
 </head>
@@ -19,8 +19,20 @@
     <button id="admin-theme" class="theme-changer" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="changer-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="changer-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg></button>
   </header>
   <main id="page-content" class="admin-shell">
+    <section class="people-hero" aria-labelledby="people-hero-title">
+      <canvas id="people-particles" aria-hidden="true"></canvas>
+      <div class="people-hero-content">
+        <p class="people-hero-eyebrow">THE PEOPLE · BETTER TOGETHER</p>
+        <h1 id="people-hero-title">Great teams start<br>with <span>great people.</span></h1>
+        <p class="people-hero-description">Every teammate brings something different. Give them a place to share it.</p>
+        <a class="people-hero-action" href="#teammate-workspace">Add a teammate <span aria-hidden="true">↓</span></a>
+        <p class="people-hero-note">A face. A story. A new connection.</p>
+      </div>
+      <button id="people-particles-toggle" class="people-hero-motion" type="button" aria-pressed="false" hidden>Pause animation</button>
+    </section>
+    <div id="teammate-workspace" tabindex="-1">
     <div class="breadcrumb"><a href="index.html#directory">Directory</a><span aria-hidden="true">/</span><span>Add Teammate</span></div>
-    <div class="admin-intro"><div><p class="admin-eyebrow">THE PEOPLE · TEAM MANAGEMENT</p><h1>Add New Teammate</h1><p>Introduce someone new to the team. Build their profile and preview it as you go.</p></div><a class="back-link" href="index.html#directory">← Back to directory</a></div>
+    <div class="admin-intro"><div><p class="admin-eyebrow">THE PEOPLE · TEAM MANAGEMENT</p><h2>Add New Teammate</h2><p>Introduce someone new to the team. Build their profile and preview it as you go.</p></div><a class="back-link" href="index.html#directory">← Back to directory</a></div>
     <p id="admin-status" class="admin-status" role="status" aria-live="polite">Connecting…</p>
     <section id="login-panel" class="admin-panel login-panel" hidden aria-labelledby="login-title">
       <div class="section-icon" aria-hidden="true">↗</div><h2 id="login-title">Admin login</h2><p>Sign in with your approved admin account to add or manage teammates.</p>
@@ -63,9 +75,11 @@
       </div>
       <section class="admin-panel roster-panel" aria-labelledby="roster-heading"><div class="list-heading"><div><p class="admin-eyebrow">KEEP YOUR TEAM CURRENT</p><h2 id="roster-heading">Manage teammates <span id="admin-count"></span></h2></div><button id="reload-employees" type="button">Refresh list</button></div><label for="admin-search">Find a teammate</label><input id="admin-search" type="search" placeholder="Name, role, or department"><ul id="admin-employees" class="admin-employees" aria-label="Employees"></ul></section>
     </section>
+    </div>
     <footer>The People © 2026 · Built through LA Tech Rising</footer>
   </main>
   <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description"><h2 id="delete-title">Remove employee?</h2><p id="delete-description"></p><div class="admin-actions"><button id="cancel-delete" type="button" autofocus>Cancel</button><button id="confirm-delete" class="admin-danger" type="button">Remove employee</button></div></dialog>
+  <script src="admin-hero.js?v=1"></script>
   <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js?v=world-location-17"></script><script src="location-picker.js?v=world-location-17"></script><script src="admin.js?v=world-location-17"></script>
 </body>
 </html>
