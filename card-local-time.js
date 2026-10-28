@@ -1,6 +1,7 @@
 // Compact city clocks adapted from the TimeZone reference using native Intl.
 (() => {
     const zones = {
+        'vancouver': 'America/Vancouver', 'toronto': 'America/Toronto', 'montreal': 'America/Toronto', 'calgary': 'America/Edmonton',
         'los angeles': 'America/Los_Angeles', 'san francisco': 'America/Los_Angeles',
         'san diego': 'America/Los_Angeles', 'seattle': 'America/Los_Angeles',
         'las vegas': 'America/Los_Angeles', 'portland': 'America/Los_Angeles',

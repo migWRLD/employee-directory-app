@@ -1,0 +1,2 @@
+#employee-form select{display:block;width:100%;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--page);color:var(--ink);padding:11px 12px;font:inherit;font-size:13px;touch-action:manipulation}
+#employee-form select:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
