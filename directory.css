@@ -84,3 +84,7 @@ body.darkMode .employee-card{background:var(--panel);color:var(--ink)}body.darkM
 }
 .hero-section[data-page="directory"] .hero-label,
 .hero-section[data-page="directory"] .hero-description{color:#fff}
+
+/* Local time uses the same compact typography and icon alignment as location. */
+.card-details .card-time-row{font:inherit;font-size:13px;line-height:1.35;margin:0}
+.card-local-time{font:inherit;color:inherit;font-variant-numeric:tabular-nums}

@@ -765,6 +765,7 @@ function cardIcon(kind) {
     icon.setAttribute('aria-hidden', 'true');
     const paths = {
         bookmark: '<path d="M6 3h12v18l-6-4-6 4z"/>',
+        clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
         location: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
         people: '<circle cx="9" cy="8" r="3"/><path d="M2 21v-3a7 7 0 0 1 14 0v3M17 5a3 3 0 0 1 0 6M18 15a5 5 0 0 1 4 5M1 21h22"/>',
         email: '<rect x="3" y="5" width="18" height="14" rx="1"/><path d="m3 6 9 7 9-7"/>',
@@ -839,6 +840,12 @@ function makeCard(employee) {
         return row;
     }
     details.append(detail('location', employee.location || 'Location not listed'));
+    if (window.CardLocalTime) {
+        const clockRow = detail('clock', '');
+        clockRow.className = 'card-time-row';
+        clockRow.lastElementChild.replaceWith(window.CardLocalTime.create(employee));
+        details.append(clockRow);
+    }
     const reports = employee.directReports;
     details.append(detail('people', Number.isInteger(reports) && reports >= 0
         ? 'Manages ' + reports + ' direct reports'
