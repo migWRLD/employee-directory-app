@@ -1,3 +1,7 @@
+# Earlier development notes
+
+Preserved from the former root-level `changes` file.
+
 <<Date : 9/27/2026>>
 
 > > changes made to the Css folder
