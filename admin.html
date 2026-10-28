@@ -7,18 +7,12 @@
   <title>Add Teammate | The People</title>
   <link rel="icon" type="image/png" href="the-people-logo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="admin.css?v=particle-hero-1">
+  <link rel="stylesheet" href="admin.css?v=aether-flow-5">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
 <link rel="stylesheet" href="location-picker.css?v=world-location-17">
 </head>
 <body class="admin-page">
   <a class="skip-link" href="#page-content">Skip to main content</a>
-  <header class="admin-header">
-    <a class="admin-brand" href="index.html#directory" aria-label="The People directory"><img src="the-people-logo.png" alt="The People" width="1960" height="816"></a>
-    <nav aria-label="Main navigation"><a href="index.html#directory">Directory</a><a href="index.html#Departments">Departments</a><a href="index.html#About">About</a><a href="index.html#Contact">Contact</a></nav>
-    <button id="admin-theme" class="theme-changer" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="changer-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="changer-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg></button>
-  </header>
-  <main id="page-content" class="admin-shell">
     <section class="people-hero" aria-labelledby="people-hero-title">
       <canvas id="people-particles" aria-hidden="true"></canvas>
       <div class="people-hero-content">
@@ -30,6 +24,12 @@
       </div>
       <button id="people-particles-toggle" class="people-hero-motion" type="button" aria-pressed="false" hidden>Pause animation</button>
     </section>
+  <header class="admin-header">
+    <a class="admin-brand" href="index.html#directory" aria-label="The People directory"><img src="the-people-logo.png" alt="The People" width="1960" height="816"></a>
+    <nav aria-label="Main navigation"><a href="index.html#directory">Directory</a><a href="index.html#Departments">Departments</a><a href="index.html#About">About</a><a href="index.html#Contact">Contact</a></nav>
+    <button id="admin-theme" class="theme-changer" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="changer-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><svg class="changer-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" fill="currentColor"/></svg></button>
+  </header>
+  <main id="page-content" class="admin-shell">
     <div id="teammate-workspace" tabindex="-1">
     <div class="breadcrumb"><a href="index.html#directory">Directory</a><span aria-hidden="true">/</span><span>Add Teammate</span></div>
     <div class="admin-intro"><div><p class="admin-eyebrow">THE PEOPLE · TEAM MANAGEMENT</p><h2>Add New Teammate</h2><p>Introduce someone new to the team. Build their profile and preview it as you go.</p></div><a class="back-link" href="index.html#directory">← Back to directory</a></div>
@@ -79,7 +79,136 @@
     <footer>The People © 2026 · Built through LA Tech Rising</footer>
   </main>
   <dialog id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description"><h2 id="delete-title">Remove employee?</h2><p id="delete-description"></p><div class="admin-actions"><button id="cancel-delete" type="button" autofocus>Cancel</button><button id="confirm-delete" class="admin-danger" type="button">Remove employee</button></div></dialog>
-  <script src="admin-hero.js?v=1"></script>
+  <script>
+(function () {
+    'use strict';
+    const hero = document.querySelector('.people-hero');
+    if (!hero) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    hero.querySelector('.people-hero-action').addEventListener('click', event => {
+        const target = document.getElementById('teammate-workspace');
+        if (!target) return;
+        event.preventDefault();
+        target.focus({ preventScroll: true });
+        target.scrollIntoView({ behavior: motion.matches ? 'auto' : 'smooth', block: 'start' });
+    });
+
+    const canvas = document.getElementById('people-particles');
+    const context = canvas && canvas.getContext('2d');
+    if (!context) return;
+    const toggle = document.getElementById('people-particles-toggle');
+    const mouse = { x: 0, y: 0, active: false, radius: 200 };
+    let width = 1, height = 1, particles = [], frame = null, previousTime = null;
+    let paused = motion.matches, visible = true;
+
+    function draw() {
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, width, height);
+        for (const particle of particles) {
+            context.beginPath();
+            context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+            context.fillStyle = 'rgba(191,128,255,0.8)';
+            context.fill();
+        }
+        const linkDistance = Math.min(142, Math.sqrt(width * height / 49));
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a + 1; b < particles.length; b++) {
+                const p = particles[a], q = particles[b];
+                const distance = Math.hypot(p.x - q.x, p.y - q.y);
+                if (distance >= linkDistance) continue;
+                const opacity = Math.max(0, 1 - distance * distance / 20000);
+                const nearMouse = mouse.active && Math.hypot(p.x - mouse.x, p.y - mouse.y) < mouse.radius;
+                context.strokeStyle = nearMouse ? `rgba(255,255,255,${opacity})` : `rgba(200,150,255,${opacity})`;
+                context.lineWidth = 1;
+                context.beginPath();
+                context.moveTo(p.x, p.y);
+                context.lineTo(q.x, q.y);
+                context.stroke();
+            }
+        }
+    }
+    function animate(time) {
+        const step = previousTime === null ? 0 : Math.min((time - previousTime) / 16.67, 2);
+        previousTime = time;
+        for (const particle of particles) {
+            if (mouse.active) {
+                let dx = mouse.x - particle.x, dy = mouse.y - particle.y;
+                let distance = Math.hypot(dx, dy);
+                if (distance < mouse.radius) {
+                    // The original divides by zero when the cursor lands on a particle.
+                    if (distance < 0.01) { dx = 1; dy = 0; distance = 1; }
+                    const force = (mouse.radius - distance) / mouse.radius * 5 * step;
+                    particle.x -= dx / distance * force;
+                    particle.y -= dy / distance * force;
+                }
+            }
+            particle.x += particle.vx * step;
+            particle.y += particle.vy * step;
+            if (particle.x < 0 || particle.x > width) {
+                particle.vx *= -1;
+                particle.x = Math.max(0, Math.min(width, particle.x));
+            }
+            if (particle.y < 0 || particle.y > height) {
+                particle.vy *= -1;
+                particle.y = Math.max(0, Math.min(height, particle.y));
+            }
+        }
+        draw();
+        frame = requestAnimationFrame(animate);
+    }
+    function updateToggle() {
+        toggle.hidden = false;
+        toggle.textContent = paused ? 'Play animation' : 'Pause animation';
+        toggle.setAttribute('aria-pressed', String(paused));
+    }
+    function syncAnimation() {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null;
+        previousTime = null;
+        if (!paused && !document.hidden && visible) frame = requestAnimationFrame(animate);
+        else draw();
+        updateToggle();
+    }
+    function resize() {
+        width = Math.max(1, hero.clientWidth);
+        height = Math.max(1, hero.clientHeight);
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        particles = Array.from({ length: Math.min(180, Math.max(30, Math.ceil(width * height / 9000))) }, () => ({
+            x: Math.random() * width, y: Math.random() * height,
+            vx: Math.random() * 0.4 - 0.2, vy: Math.random() * 0.4 - 0.2,
+            radius: Math.random() * 2 + 1
+        }));
+        draw();
+    }
+    hero.addEventListener('pointermove', event => {
+        const bounds = hero.getBoundingClientRect();
+        mouse.x = event.clientX - bounds.left;
+        mouse.y = event.clientY - bounds.top;
+        mouse.active = true;
+    });
+    function releasePointer() { mouse.active = false; }
+    hero.addEventListener('pointerleave', releasePointer);
+    hero.addEventListener('pointercancel', releasePointer);
+    hero.addEventListener('pointerup', event => {
+        if (event.pointerType !== 'mouse') releasePointer();
+    });
+    window.addEventListener('blur', releasePointer);
+    toggle.addEventListener('click', () => { paused = !paused; syncAnimation(); });
+    motion.addEventListener('change', () => { paused = motion.matches; syncAnimation(); });
+    document.addEventListener('visibilitychange', syncAnimation);
+    if ('ResizeObserver' in window) new ResizeObserver(resize).observe(hero);
+    else window.addEventListener('resize', resize);
+    if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
+        visible = entries[0].isIntersecting;
+        syncAnimation();
+    }).observe(hero);
+    resize();
+    syncAnimation();
+})();
+  </script>
   <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js?v=world-location-17"></script><script src="location-picker.js?v=world-location-17"></script><script src="admin.js?v=world-location-17"></script>
 </body>
 </html>
