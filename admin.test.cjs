@@ -7,6 +7,7 @@ async function setup(admin, failSave=false) {
  const dom = new JSDOM(fs.readFileSync('admin.html','utf8'), {runScripts:'outside-only',url:'https://example.com/admin.html'});
  const w=dom.window; let saved;
  w.EmployeeStore={getAdmin:async()=>admin,list:async()=>[{id:'1',name:'<img src=x onerror=alert(1)>',title:'Developer',department:'Engineering',location:'San Antonio, TX (CT)',skills:[],email:'test@example.com',image:''}],onAuthChange(){},save:async input=>{if(failSave)throw Error('Connection failed');saved=input;return {...input,id:'2'};},removePhotoIfUnused:async()=>{}};
+ w.eval(fs.readFileSync('location-picker.js','utf8'));
  w.eval(fs.readFileSync('admin.js','utf8')); await tick();
  return {w,getSaved:()=>saved};
 }
@@ -44,4 +45,20 @@ test('theme icon button toggles and remembers the selected theme',async()=>{
  assert.equal(button.getAttribute('aria-pressed'),'false');button.click();
  assert.equal(w.document.body.classList.contains('darkMode'),true);assert.equal(button.getAttribute('aria-label'),'Switch to light mode');assert.equal(w.localStorage.getItem('darkMode'),'enabled');
  button.click();assert.equal(w.document.body.classList.contains('darkMode'),false);assert.equal(button.getAttribute('aria-label'),'Switch to dark mode');w.close();
+});
+
+test('Vancouver suggestion fills Canada, province and named zone and saves them',async()=>{
+ const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;
+ assert.equal(d.querySelectorAll('#employee-country option').length,250);
+ const city=d.getElementById('employee-location');city.value='Vancouver';city.dispatchEvent(new w.Event('change',{bubbles:true}));
+ assert.equal(d.getElementById('employee-country').value,'Canada');assert.equal(d.getElementById('employee-region').value,'British Columbia');assert.equal(d.getElementById('employee-timeZone').value,'America/Vancouver');assert.equal(d.getElementById('card-location').textContent,'Vancouver, British Columbia, Canada');
+ for(const [k,v] of Object.entries({name:'New Teammate',title:'Engineer',department:'Engineering',email:'new@example.com'}))d.getElementById('employee-'+k).value=v;
+ d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().country,'Canada');assert.equal(getSaved().region,'British Columbia');assert.equal(getSaved().timeZone,'America/Vancouver');w.close();
+});
+test('manual worldwide city works with selected country and zone',async()=>{
+ const {w,getSaved}=await setup({id:'admin',email:'owner@example.com'});const d=w.document;
+ d.getElementById('employee-country').value='Afghanistan';d.getElementById('employee-country').dispatchEvent(new w.Event('change',{bubbles:true}));
+ d.getElementById('employee-location').value='Herat';d.getElementById('employee-region').value='Herat';d.getElementById('employee-timeZone').value='Asia/Kabul';
+ for(const [k,v] of Object.entries({name:'New Teammate',title:'Engineer',department:'Engineering',email:'new@example.com'}))d.getElementById('employee-'+k).value=v;
+ d.getElementById('employee-form').dispatchEvent(new w.Event('submit',{cancelable:true}));await tick();assert.equal(getSaved().location,'Herat');assert.equal(getSaved().country,'Afghanistan');assert.equal(getSaved().timeZone,'Asia/Kabul');w.close();
 });

@@ -23,6 +23,9 @@ create table public.employees (
     github text not null default '' check (github = '' or github ~ '^https?://'),
     portfolio text not null default '' check (portfolio = '' or portfolio ~ '^https?://'),
     location text not null default '' check (length(location) <= 160),
+    region text not null default '' check(length(region)<=100),
+    country text not null default '' check(length(country)<=100),
+    time_zone text not null default '' check(length(time_zone)<=100),
     joining_date date,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()

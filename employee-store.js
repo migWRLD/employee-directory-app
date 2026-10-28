@@ -7,14 +7,14 @@
         auth: { storageKey: 'employee-directory-admin', persistSession: true, autoRefreshToken: true }
     });
     const bucket = 'employee-photos';
-    const columns = 'id,name,title,department,location,email,image,bio,skills,linkedin,github,portfolio,joining_date,created_at,updated_at';
+    const columns = 'id,name,title,department,location,region,country,time_zone,email,image,bio,skills,linkedin,github,portfolio,joining_date,created_at,updated_at';
     const photoPrefix = `${config.url}/storage/v1/object/public/${bucket}/`;
 
     function check(result) {
         if (result.error) throw result.error;
         return result.data;
     }
-    function mapEmployee(row) { return { ...row, joiningDate: row.joining_date }; }
+    function mapEmployee(row) { return { ...row, locationRaw: row.location, location: [row.location, row.region, row.country].filter(Boolean).join(', '), timeZone: row.time_zone || '', joiningDate: row.joining_date }; }
     function safeUrl(value) {
         if (!value) return '';
         const url = new URL(value);
@@ -25,7 +25,7 @@
     }
     function cleanEmployee(input) {
         const result = {};
-        for (const field of ['name', 'title', 'department', 'location', 'email', 'bio']) {
+        for (const field of ['name', 'title', 'department', 'location', 'region', 'country', 'email', 'bio']) {
             result[field] = String(input[field] || '').trim();
         }
         if (!result.name || !result.title || !result.department || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result.email)) {
@@ -35,6 +35,9 @@
         result.skills = (Array.isArray(input.skills) ? input.skills : []).map(s => String(s).trim()).filter(Boolean);
         if (result.skills.length > 20 || result.skills.some(s => s.length > 80)) throw new Error('Use up to 20 skills, with at most 80 characters each.');
         if (result.location.length > 160) throw new Error('Use at most 160 characters for location.');
+        if (result.region.length > 100 || result.country.length > 100) throw new Error('Use at most 100 characters for region and country.');
+        result.time_zone = String(input.timeZone || '').trim();
+        if (result.time_zone) { try { new Intl.DateTimeFormat('en-US', {timeZone: result.time_zone}); } catch { throw new Error('Choose a valid time zone.'); } }
         result.joining_date = input.joiningDate || null;
         result.updated_at = new Date().toISOString();
         return result;
