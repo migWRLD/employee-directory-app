@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="admin.css?v=aether-flow-5">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
 <link rel="stylesheet" href="location-picker.css?v=world-location-17">
+  <link rel="stylesheet" href="apple-spotlight.css?v=spotlight-1">
 </head>
 <body class="admin-page">
   <a class="skip-link" href="#page-content">Skip to main content</a>
@@ -20,6 +21,25 @@
         <h1 id="people-hero-title">Great teams start<br>with <span>great people.</span></h1>
         <p class="people-hero-description">Every teammate brings something different. Give them a place to share it.</p>
         <a class="people-hero-action" href="#teammate-workspace">Add a teammate <span aria-hidden="true">↓</span></a>
+        <div class="apple-spotlight" id="teammate-spotlight" data-size="regular" style="--spotlight-width:768px;--spotlight-opacity:1">
+          <div class="spotlight-row">
+            <div class="spotlight-panel">
+              <div class="spotlight-input-row">
+                <svg class="spotlight-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.8"/><path d="m16.5 16.5 4.5 4.5"/></svg>
+                <div class="spotlight-input-wrap"><label class="visually-hidden" for="spotlight-search">Search form fields and site pages</label><span class="spotlight-placeholder" aria-hidden="true">Search</span><input id="spotlight-search" type="search" autocomplete="off" maxlength="200" aria-describedby="spotlight-help" aria-controls="spotlight-results" aria-expanded="false"></div>
+              </div>
+              <div id="spotlight-results" class="spotlight-results" hidden></div>
+            </div>
+            <nav class="spotlight-shortcuts" aria-label="Quick shortcuts"></nav>
+          </div>
+          <p id="spotlight-help" class="spotlight-help">Jump to a form field or page · ↓ for results · Esc to clear</p>
+          <p id="spotlight-status" class="visually-hidden" role="status" aria-live="polite"></p>
+          <details class="spotlight-appearance"><summary>Search appearance</summary><div class="spotlight-controls">
+            <label for="spotlight-size">Size<select id="spotlight-size"><option value="compact">Small</option><option value="regular" selected>Regular</option><option value="large">Large</option></select></label>
+            <label for="spotlight-width">Width<select id="spotlight-width"><option value="600">Short</option><option value="768" selected>Standard</option><option value="1024">Long</option></select></label>
+            <label class="spotlight-opacity-control" for="spotlight-opacity">Transparency <output id="spotlight-opacity-value" for="spotlight-opacity">0%</output><input id="spotlight-opacity" type="range" min="0" max="100" step="5" value="0"></label>
+          </div></details>
+        </div>
         <p class="people-hero-note">A face. A story. A new connection.</p>
       </div>
       <button id="people-particles-toggle" class="people-hero-motion" type="button" aria-pressed="false" hidden>Pause animation</button>
@@ -210,5 +230,6 @@
 })();
   </script>
   <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js?v=world-location-17"></script><script src="location-picker.js?v=world-location-17"></script><script src="admin.js?v=world-location-17"></script>
+  <script src="apple-spotlight.js?v=spotlight-1"></script>
 </body>
 </html>
