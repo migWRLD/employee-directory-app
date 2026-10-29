@@ -205,13 +205,113 @@
     input.addEventListener('focus', () => {
         if (input.value.trim() && loadState !== 'loading' && (loadState !== 'ready' || Date.now() - loadedAt > 30000)) loadPeople();
     });
+    const voice = root.querySelector('#spotlight-voice');
+    const voiceStatus = root.querySelector('#spotlight-voice-status');
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let voiceActive = false;
+    let voiceRun = 0;
+    function resetVoice() {
+        voiceActive = false;
+        voice.setAttribute('aria-pressed', 'false');
+        voice.setAttribute('aria-label', 'Search by voice');
+        voice.title = 'Search by voice';
+    }
+    function stopVoice() {
+        const current = recognition;
+        recognition = null;
+        voiceRun++;
+        resetVoice();
+        if (current) { try { current.abort(); } catch {} }
+    }
+    voice.addEventListener('click', () => {
+        if (voiceActive) {
+            stopVoice();
+            voiceStatus.textContent = 'Voice search stopped.';
+            return;
+        }
+        if (!Recognition) {
+            voiceStatus.textContent = 'Voice search is not supported in this browser. You can type your search instead.';
+            input.focus({ preventScroll: true });
+            return;
+        }
+        const run = ++voiceRun;
+        let heard = false;
+        try {
+            recognition = new Recognition();
+            recognition.lang = document.documentElement.lang || 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.onstart = () => {
+                if (run !== voiceRun) return;
+                voiceStatus.textContent = 'Listening… Say a name, skill, role, city, or country. Click again to stop.';
+            };
+            recognition.onresult = event => {
+                if (run !== voiceRun) return;
+                const transcript = event.results[0]?.[0]?.transcript?.trim();
+                if (!transcript) return;
+                heard = true;
+                input.value = transcript.slice(0, input.maxLength);
+                render();
+                input.focus({ preventScroll: true });
+                voiceStatus.textContent = `Searching for “${input.value}”.`;
+                stopVoice();
+            };
+            recognition.onerror = event => {
+                if (run !== voiceRun) return;
+                heard = true;
+                const messages = {
+                    'not-allowed': 'Microphone permission was denied. Allow microphone access in your browser, or type your search.',
+                    'service-not-allowed': 'Voice search is unavailable in this browser. Please type your search.',
+                    'audio-capture': 'No microphone is available. Connect a microphone or type your search.',
+                    'no-speech': 'No speech was heard. Try again or type your search.',
+                    network: 'Voice search could not connect. Try again or type your search.'
+                };
+                voiceStatus.textContent = messages[event.error] || 'Voice search stopped. Try again or type your search.';
+                stopVoice();
+            };
+            recognition.onend = () => {
+                if (run !== voiceRun) return;
+                recognition = null;
+                resetVoice();
+                if (!heard) voiceStatus.textContent = 'No speech was heard. Try again or type your search.';
+            };
+            voiceActive = true;
+            voice.setAttribute('aria-pressed', 'true');
+            voice.setAttribute('aria-label', 'Stop voice search');
+            voice.title = 'Stop voice search';
+            voiceStatus.textContent = 'Starting voice search… Allow microphone access if asked.';
+            recognition.start();
+        } catch {
+            stopVoice();
+            voiceStatus.textContent = 'Voice search could not start. Please type your search or try again.';
+        }
+    });
+    // Stop capture when leaving the page/hero or cancelling with Escape.
+    window.addEventListener('pagehide', stopVoice);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopVoice(); });
+    root.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && voiceActive) {
+            stopVoice();
+            voiceStatus.textContent = 'Voice search stopped.';
+        }
+    });
+    root.addEventListener('click', event => { if (event.target.closest('a')) stopVoice(); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
+        if (!entries[0].isIntersecting && voiceActive) {
+            stopVoice();
+            voiceStatus.textContent = 'Voice search stopped.';
+        }
+    }).observe(root);
+    input.addEventListener('input', () => { if (voiceActive) stopVoice(); });
     const size = root.querySelector('#spotlight-size');
     const width = root.querySelector('#spotlight-width');
     const opacity = root.querySelector('#spotlight-opacity');
     const output = root.querySelector('#spotlight-opacity-value');
     function updateAppearance() {
-        root.dataset.size = ['compact', 'regular', 'large'].includes(size.value) ? size.value : 'regular';
-        root.style.setProperty('--spotlight-width', `${Number(width.value) || 768}px`);
+        root.dataset.size = ['compact', 'regular', 'large'].includes(size.value) ? size.value : 'compact';
+        root.style.setProperty('--spotlight-width', `${Number(width.value) || 1024}px`);
         const surfaceOpacity = .88 * (1 - Number(opacity.value) / 100);
         root.style.setProperty('--spotlight-opacity', String(surfaceOpacity));
         root.dataset.glass = String(surfaceOpacity < .5);

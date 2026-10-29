@@ -52,3 +52,28 @@
 @media(prefers-reduced-motion:reduce){.apple-spotlight,.spotlight-placeholder,.spotlight-result{animation:none}.spotlight-shortcuts,.spotlight-shortcut{transition:none}}
 
 .spotlight-retry{margin:0 16px 12px;background:#fff;color:#111;border-color:#aaa}
+
+/* TextPrism: cyan/magenta wave and letter lift; existing heading font is retained. */
+.people-hero h1 .prism-char{display:inline-block;color:inherit;will-change:transform,text-shadow}
+.people-hero h1 .prism-word{display:inline-block;white-space:nowrap;color:inherit}
+.people-hero h1 .prism-copy{color:inherit}
+.people-hero h1 .prism-accent{color:#d3b3ff}
+.people-hero-description.typing-loop{position:relative}
+.typing-reserve{visibility:hidden;display:block}
+.typing-copy{position:absolute;inset:0;color:#7c5cff}
+.typing-cursor{color:#7c5cff;animation:typing-blink 1s step-end infinite}
+@keyframes typing-blink{50%{opacity:0}}
+#teammate-spotlight .spotlight-input-row{padding-right:6px;gap:10px}
+#teammate-spotlight .spotlight-voice{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:7px;border:1px solid #ffffff30;border-radius:50%;background:#0c0e12;color:#fff;box-shadow:inset 0 1px 0 #fff4}
+#teammate-spotlight .spotlight-voice:hover{background:#222a3a}
+#teammate-spotlight .spotlight-voice[aria-pressed="true"]{background:#152b4b;box-shadow:0 0 0 2px #7eb8ff,inset 0 1px 0 #fff4}
+.voice-waveform{width:28px;height:26px;overflow:visible}
+.voice-waveform rect{transform-box:fill-box;transform-origin:center;animation:voice-wave .8s ease-in-out infinite alternate;animation-play-state:paused}
+.spotlight-voice[aria-pressed="true"] rect{animation-play-state:running}
+.voice-waveform rect:nth-child(2){animation-delay:-.2s}.voice-waveform rect:nth-child(3){animation-delay:-.5s}.voice-waveform rect:nth-child(4){animation-delay:-.35s}.voice-waveform rect:nth-child(5){animation-delay:-.1s}
+@keyframes voice-wave{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.spotlight-voice-status{font-size:12px;text-align:center;color:#e4deee;margin:0;min-height:0}
+.spotlight-voice-status:not(:empty){margin-top:10px}
+@media(prefers-reduced-motion:reduce){.voice-waveform rect,.typing-cursor{animation:none}.people-hero h1 .prism-char{will-change:auto}}
+
+.people-hero[data-motion-paused="true"] .typing-cursor{animation-play-state:paused}

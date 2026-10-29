@@ -12,7 +12,7 @@ function setup(list = async () => people) {
         runScripts: 'outside-only', url: 'https://example.com/admin.html'
     });
     const w = dom.window;
-    w.matchMedia = () => ({ matches: true });
+    w.matchMedia = () => ({ matches: true, addEventListener() {} });
     w.EmployeeStore = { list };
     w.HTMLElement.prototype.scrollIntoView = function () {};
     w.eval(fs.readFileSync('apple-spotlight.js', 'utf8'));
@@ -71,12 +71,12 @@ test('pending searches use the newest query, while failed requests offer retry',
         assert.match(d.querySelector('.spotlight-result').textContent, /Alex Sample/);
     } finally { w.close(); }
 });
-test('default appearance is regular, standard width and lightly glassy at 0 percent', () => {
+test('default appearance is small, long width and lightly glassy at 0 percent', () => {
     const w = setup();
     try {
         const d = w.document, root = d.getElementById('teammate-spotlight');
-        assert.equal(root.dataset.size, 'regular');
-        assert.equal(root.style.getPropertyValue('--spotlight-width'), '768px');
+        assert.equal(root.dataset.size, 'compact');
+        assert.equal(root.style.getPropertyValue('--spotlight-width'), '1024px');
         assert.equal(d.getElementById('spotlight-opacity').value, '0');
         assert.equal(root.style.getPropertyValue('--spotlight-opacity'), '0.88');
     } finally { w.close(); }
@@ -107,5 +107,65 @@ test('a removed profile link keeps the directory usable and explains the missing
         assert.equal(w.document.querySelector('.profile-modal'), null);
         assert.match(w.document.querySelector('#directory-status').textContent, /no longer available/);
         assert.equal(w.document.querySelectorAll('#employee-list .employee-card').length, 2);
+    } finally { w.close(); }
+});
+
+test('voice search starts only on click, uses speech for profile results, and stops capture', async () => {
+    let instance;
+    class Recognition {
+        constructor() { instance = this; this.started = false; this.aborted = false; }
+        start() { this.started = true; this.onstart?.(); }
+        abort() { this.aborted = true; this.onend?.(); }
+    }
+    const w = setup();
+    try {
+        // Recreate the page with SpeechRecognition present before script initialization.
+        const dom = new JSDOM(fs.readFileSync('admin.html', 'utf8'), { runScripts: 'outside-only', url: 'https://example.com/admin.html' });
+        const v = dom.window;
+        try {
+            v.matchMedia = () => ({ matches: true });
+            v.EmployeeStore = { list: async () => people };
+            v.SpeechRecognition = Recognition;
+            v.eval(fs.readFileSync('apple-spotlight.js', 'utf8'));
+            const d = v.document, button = d.getElementById('spotlight-voice');
+            assert.equal(instance, undefined);
+            button.click();
+            assert.equal(instance.started, true);
+            assert.equal(button.getAttribute('aria-pressed'), 'true');
+            instance.onresult({ results: [[{ transcript: 'Canada' }]] });
+            await tick();
+            assert.equal(d.getElementById('spotlight-search').value, 'Canada');
+            assert.match(d.querySelector('.spotlight-result').textContent, /Zoë Example/);
+            assert.equal(button.getAttribute('aria-pressed'), 'false');
+            assert.equal(instance.aborted, true);
+            button.click();
+            instance.onerror({ error: 'not-allowed' });
+            assert.match(d.getElementById('spotlight-voice-status').textContent, /permission was denied/);
+            assert.equal(button.getAttribute('aria-pressed'), 'false');
+            search(v, 'Figma'); await tick();
+            assert.match(d.querySelector('.spotlight-result').textContent, /Alex Sample/);
+        } finally { v.close(); }
+    } finally { w.close(); }
+});
+test('unsupported browsers explain voice availability and retain typed search', async () => {
+    const w = setup();
+    try {
+        const d = w.document;
+        d.getElementById('spotlight-voice').click();
+        assert.match(d.getElementById('spotlight-voice-status').textContent, /not supported/);
+        search(w, 'CSS'); await tick();
+        assert.match(d.querySelector('.spotlight-result').textContent, /Zoë Example/);
+    } finally { w.close(); }
+});
+test('reduced-motion hero keeps complete accessible copy and does not start animation', () => {
+    const w = setup();
+    try {
+        w.eval(fs.readFileSync('admin-hero-motion.js', 'utf8'));
+        const d = w.document;
+        assert.equal(d.getElementById('people-hero-title').getAttribute('aria-label'), 'Great teams start with great people.');
+        assert.equal(d.querySelector('.typing-copy').textContent, 'Every teammate brings something different. Give them a place to share it.|');
+        assert.equal(d.querySelector('.typing-cursor').hidden, true);
+        assert.equal(d.querySelector('.people-hero').dataset.motionPaused, 'true');
+        assert.ok([...d.querySelectorAll('.prism-char')].every(char => !char.style.transform));
     } finally { w.close(); }
 });
