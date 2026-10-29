@@ -46,7 +46,11 @@
         { label: 'Professional links', description: 'LinkedIn, GitHub, and portfolio', href: '#links-heading', focus: 'employee-linkedin', icon: 'link', keywords: 'social website profile' },
         { label: 'Manage teammates', description: 'Search the roster and edit existing profiles', href: '#roster-heading', focus: 'admin-search', icon: 'teams', keywords: 'employees list edit delete remove roster' }
     ];
-    function setPlaceholder(text = 'Search people') {
+    const searchPrompts = ['Search people', 'Search departments', 'Search positions', 'Search skills', 'Search countries', 'Search cities', 'Search email'];
+    let currentPrompt = searchPrompts[0];
+    let promptTimer = null;
+    let promptVisible = true;
+    function setPlaceholder(text = currentPrompt) {
         if (placeholder.textContent !== text) {
             placeholder.textContent = text;
         }
@@ -89,10 +93,6 @@
             link.append(copy, arrow);
         }
         link.addEventListener('click', event => goToSection(event, entry));
-        link.addEventListener('pointerenter', () => setPlaceholder(entry.label));
-        link.addEventListener('focus', () => setPlaceholder(entry.label));
-        link.addEventListener('pointerleave', () => setPlaceholder());
-        link.addEventListener('blur', () => setPlaceholder());
         return link;
     }
     [entries[0], entries[1], entries[2], entries[4]].forEach(entry => shortcuts.append(makeLink(entry, true)));
@@ -141,7 +141,8 @@
         results.hidden = !query;
         results.setAttribute('aria-busy', String(loadState === 'loading'));
         input.setAttribute('aria-expanded', String(Boolean(query)));
-        setPlaceholder('Search people');
+        setPlaceholder();
+        schedulePrompt();
         if (!query) { status.textContent = ''; return; }
         if (loadState === 'idle') { loadPeople(); return; }
         if (loadState === 'loading') { feedback('Searching the People Directory…'); return; }
@@ -300,11 +301,32 @@
             voiceStatus.textContent = 'Voice search stopped.';
         }
     }).observe(root);
-    input.addEventListener('input', () => { if (voiceActive) stopVoice(); });
+    function schedulePrompt() {
+        if (promptTimer !== null) window.clearTimeout(promptTimer);
+        promptTimer = null;
+        if (motion.matches || document.hidden || !promptVisible || input.value) return;
+        promptTimer = window.setTimeout(() => {
+            const choices = searchPrompts.filter(text => text !== currentPrompt);
+            currentPrompt = choices[Math.floor(Math.random() * choices.length)];
+            // Replace the complete two-word prompt at once; keep the shine effect.
+            setPlaceholder();
+            schedulePrompt();
+        }, 3200);
+    }
+    input.addEventListener('input', () => { if (voiceActive) stopVoice(); schedulePrompt(); });
+    motion.addEventListener?.('change', schedulePrompt);
+    document.addEventListener('visibilitychange', schedulePrompt);
+    window.addEventListener('pagehide', () => { window.clearTimeout(promptTimer); promptTimer = null; });
+    window.addEventListener('pageshow', schedulePrompt);
+    if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
+        promptVisible = entries[0].isIntersecting;
+        schedulePrompt();
+    }).observe(root);
     // Fixed appearance requested for the Add Teammate page.
     root.dataset.size = 'compact';
     root.style.setProperty('--spotlight-width', '1024px');
     root.style.setProperty('--spotlight-opacity', '.88');
     root.dataset.glass = 'false';
     render();
+    schedulePrompt();
 })();
