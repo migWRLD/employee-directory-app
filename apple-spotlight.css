@@ -93,3 +93,8 @@
 .people-hero .people-hero-note{font-family:"Times New Roman",Times,serif;font-size:14px}
 .people-hero[data-motion-paused="true"] .voice-waveform rect{animation-play-state:paused}
 @media(max-width:420px){.spotlight-placeholder{font-size:16px}.spotlight-input-row{gap:8px;padding-left:14px}.spotlight-search-icon{width:24px;height:24px}}
+
+/* One gentle blink per prompt change; the shine continues between changes. */
+.spotlight-placeholder.is-prompt-blinking{animation:spotlight-shine 2.2s linear infinite,spotlight-prompt-blink .4s ease-out both}
+@keyframes spotlight-prompt-blink{0%{opacity:0}100%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.spotlight-placeholder.is-prompt-blinking{animation:none!important;opacity:1}}
