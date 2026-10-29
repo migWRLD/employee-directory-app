@@ -1,5 +1,5 @@
 /* Apple Spotlight by Samit Kapoor: plain-JS adaptation of the supplied component.
-   Search stays on this page; protected form destinations still require admin login. */
+   Searches the shared public directory and opens the existing full profile. */
 (function () {
     'use strict';
     const root = document.getElementById('teammate-spotlight');
@@ -46,7 +46,7 @@
         { label: 'Professional links', description: 'LinkedIn, GitHub, and portfolio', href: '#links-heading', focus: 'employee-linkedin', icon: 'link', keywords: 'social website profile' },
         { label: 'Manage teammates', description: 'Search the roster and edit existing profiles', href: '#roster-heading', focus: 'admin-search', icon: 'teams', keywords: 'employees list edit delete remove roster' }
     ];
-    function setPlaceholder(text = 'Search') {
+    function setPlaceholder(text = 'Search people') {
         if (placeholder.textContent !== text) {
             placeholder.textContent = text;
             placeholder.classList.remove('is-changing');
@@ -100,31 +100,83 @@
         return link;
     }
     [entries[0], entries[1], entries[2], entries[4]].forEach(entry => shortcuts.append(makeLink(entry, true)));
+    let people = [];
+    let loadState = 'idle';
+    let loadedAt = 0;
+    function normalize(value) {
+        return String(value ?? '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+    }
+    function searchable(employee) {
+        return normalize([
+            employee.name, employee.title, employee.email, employee.department,
+            employee.location, employee.region, employee.country, employee.timeZone,
+            employee.bio, employee.joiningDate, employee.linkedin, employee.github,
+            employee.portfolio, ...(Array.isArray(employee.skills) ? employee.skills : [])
+        ].filter(Boolean).join(' '));
+    }
+    async function loadPeople() {
+        if (loadState === 'loading') return;
+        loadState = 'loading';
+        render();
+        try {
+            if (!window.EmployeeStore) throw new Error('Directory unavailable');
+            const data = await window.EmployeeStore.list();
+            if (!Array.isArray(data)) throw new Error('Invalid directory response');
+            people = data.filter(employee => employee && employee.id != null);
+            loadState = 'ready';
+            loadedAt = Date.now();
+        } catch {
+            loadState = 'error';
+        }
+        // Always render the latest input, even if it changed during the request.
+        render();
+    }
+    function feedback(text) {
+        const message = document.createElement('p');
+        message.className = 'spotlight-empty';
+        message.textContent = text;
+        results.append(message);
+        status.textContent = text;
+    }
     function render() {
-        const query = input.value.trim().toLocaleLowerCase();
+        const query = normalize(input.value.trim());
         root.dataset.searching = String(Boolean(query));
         results.replaceChildren();
         results.hidden = !query;
+        results.setAttribute('aria-busy', String(loadState === 'loading'));
         input.setAttribute('aria-expanded', String(Boolean(query)));
-        setPlaceholder();
+        setPlaceholder('Search people');
         if (!query) { status.textContent = ''; return; }
+        if (loadState === 'idle') { loadPeople(); return; }
+        if (loadState === 'loading') { feedback('Searching the People Directory…'); return; }
+        if (loadState === 'error') {
+            feedback('Could not load the directory. Please try again.');
+            const retry = document.createElement('button');
+            retry.type = 'button';
+            retry.className = 'spotlight-retry';
+            retry.textContent = 'Try again';
+            retry.addEventListener('click', loadPeople);
+            results.append(retry);
+            return;
+        }
         const terms = query.split(/\s+/);
-        const matches = entries.filter(entry => {
-            const text = `${entry.label} ${entry.description} ${entry.keywords}`.toLocaleLowerCase();
-            return terms.every(term => text.includes(term));
-        });
-        matches.forEach((entry, i) => {
+        const matches = people.filter(employee => terms.every(term => searchable(employee).includes(term)));
+        matches.forEach((employee, i) => {
+            const entry = {
+                label: employee.name || 'Teammate',
+                description: [employee.title, employee.department, employee.location,
+                    employee.country && !String(employee.location || '').includes(employee.country) ? employee.country : '']
+                    .filter(Boolean).join(' · ') || 'View directory profile',
+                href: `index.html?employee=${encodeURIComponent(employee.id)}#directory`,
+                icon: 'person'
+            };
             const link = makeLink(entry);
-            link.style.setProperty('--result-delay', `${i * 35}ms`);
+            link.setAttribute('aria-label', `View profile for ${entry.label}`);
+            link.style.setProperty('--result-delay', `${Math.min(i, 6) * 35}ms`);
             results.append(link);
         });
-        if (!matches.length) {
-            const empty = document.createElement('p');
-            empty.className = 'spotlight-empty';
-            empty.textContent = 'No matches. Try “location”, “skills”, or “Directory”.';
-            results.append(empty);
-        }
-        status.textContent = matches.length ? `${matches.length} matching destination${matches.length === 1 ? '' : 's'}.` : 'No matches. Try location, skills, or Directory.';
+        if (!matches.length) feedback('No people found. Try a name, skill, role, city, or country.');
+        else status.textContent = `${matches.length} matching ${matches.length === 1 ? 'person' : 'people'}. Choose a result to open their profile.`;
     }
     input.addEventListener('input', render);
     root.addEventListener('keydown', event => {
@@ -150,6 +202,9 @@
             links[0].click();
         }
     });
+    input.addEventListener('focus', () => {
+        if (input.value.trim() && loadState !== 'loading' && (loadState !== 'ready' || Date.now() - loadedAt > 30000)) loadPeople();
+    });
     const size = root.querySelector('#spotlight-size');
     const width = root.querySelector('#spotlight-width');
     const opacity = root.querySelector('#spotlight-opacity');
@@ -157,8 +212,9 @@
     function updateAppearance() {
         root.dataset.size = ['compact', 'regular', 'large'].includes(size.value) ? size.value : 'regular';
         root.style.setProperty('--spotlight-width', `${Number(width.value) || 768}px`);
-        root.style.setProperty('--spotlight-opacity', String(1 - Number(opacity.value) / 100));
-        root.dataset.glass = String(Number(opacity.value) > 50);
+        const surfaceOpacity = .88 * (1 - Number(opacity.value) / 100);
+        root.style.setProperty('--spotlight-opacity', String(surfaceOpacity));
+        root.dataset.glass = String(surfaceOpacity < .5);
         output.value = `${opacity.value}%`;
     }
     [size, width].forEach(control => control.addEventListener('change', updateAppearance));
