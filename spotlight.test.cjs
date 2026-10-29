@@ -171,3 +171,29 @@ test('reduced-motion hero keeps complete accessible copy and does not start anim
         assert.ok([...d.querySelectorAll('.prism-char')].every(char => !char.style.transform));
     } finally { w.close(); }
 });
+
+test('random search prompts stay together and pause while a person types', async () => {
+    const dom = new JSDOM(fs.readFileSync('admin.html', 'utf8'), { runScripts: 'outside-only', url: 'https://example.com/admin.html', pretendToBeVisual: true });
+    const w = dom.window;
+    try {
+        const scheduled = new Map(); let id = 0;
+        w.matchMedia = () => ({ matches: false, addEventListener() {} });
+        w.setTimeout = callback => { scheduled.set(++id, callback); return id; };
+        w.clearTimeout = timer => scheduled.delete(timer);
+        w.EmployeeStore = { list: async () => people };
+        w.eval(fs.readFileSync('apple-spotlight.js', 'utf8'));
+        const d = w.document, prompt = d.querySelector('.spotlight-placeholder');
+        const initial = prompt.textContent;
+        const [timer, rotate] = scheduled.entries().next().value;
+        scheduled.delete(timer); rotate();
+        assert.notEqual(prompt.textContent, initial);
+        assert.match(prompt.textContent, /^Search (people|departments|positions|skills|countries|cities|email)$/);
+        const input = search(w, 'Canada'); await tick();
+        assert.equal(prompt.hidden, true);
+        assert.equal(input.value, 'Canada');
+        assert.equal(scheduled.size, 0);
+        input.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        assert.equal(prompt.hidden, false);
+        assert.equal(scheduled.size, 1);
+    } finally { w.close(); }
+});

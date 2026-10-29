@@ -68,8 +68,7 @@
 #teammate-spotlight .spotlight-voice:hover{background:transparent;filter:drop-shadow(0 0 3px #7c5cff66)}
 #teammate-spotlight .spotlight-voice[aria-pressed="true"]{background:transparent;box-shadow:none;filter:drop-shadow(0 0 4px #7c5cff)}
 .voice-waveform{width:28px;height:26px;overflow:visible}
-.voice-waveform rect{transform-box:fill-box;transform-origin:center;animation:voice-wave .8s ease-in-out infinite alternate;animation-play-state:paused}
-.spotlight-voice[aria-pressed="true"] rect{animation-play-state:running}
+.voice-waveform rect{transform-box:fill-box;transform-origin:center;animation:voice-wave .8s ease-in-out infinite alternate;animation-play-state:running}
 .voice-waveform rect:nth-child(2){animation-delay:-.2s}.voice-waveform rect:nth-child(3){animation-delay:-.5s}.voice-waveform rect:nth-child(4){animation-delay:-.35s}.voice-waveform rect:nth-child(5){animation-delay:-.1s}
 @keyframes voice-wave{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
 .spotlight-voice-status{font-size:12px;text-align:center;color:#e4deee;margin:0;min-height:0}
@@ -90,3 +89,7 @@
 .tagline-filter{position:absolute;width:0;height:0;pointer-events:none}
 @media(prefers-reduced-motion:reduce){.spotlight-placeholder{animation:none!important;background:none;-webkit-text-fill-color:currentColor;color:var(--spotlight-ink)}.tagline-morph-visual{filter:none}}
 .people-hero[data-motion-paused="true"] .spotlight-placeholder{animation-play-state:paused}
+
+.people-hero .people-hero-note{font-family:"Times New Roman",Times,serif;font-size:14px}
+.people-hero[data-motion-paused="true"] .voice-waveform rect{animation-play-state:paused}
+@media(max-width:420px){.spotlight-placeholder{font-size:16px}.spotlight-input-row{gap:8px;padding-left:14px}.spotlight-search-icon{width:24px;height:24px}}
