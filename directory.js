@@ -678,33 +678,25 @@ function isSafeExternalUrl(link) {
     }
 }
 
-function makeCopyButton(employee, iconOnly = false) {
+function makeCopyButton(employee) {
     const copyButton = document.createElement('button');
-    copyButton.className = 'copy-email' + (iconOnly ? ' copy-email-icon' : '');
+    copyButton.className = 'copy-email';
     copyButton.type = 'button';
-    const label = document.createElement('span');
-    if (iconOnly) {
-        copyButton.append(cardIcon('copy'));
-        label.className = 'visually-hidden';
-        label.setAttribute('role', 'status');
-        copyButton.append(label);
-    }
-    function setLabel(text) {
-        copyButton.setAttribute('aria-label', text + ' for ' + employee.name);
-        copyButton.title = text;
-        if (iconOnly) label.textContent = text;
-        else copyButton.textContent = text;
-    }
-    setLabel('Copy email');
+    copyButton.textContent = 'Copy Email';
+
     copyButton.addEventListener('click', async () => {
         try {
             await navigator.clipboard.writeText(employee.email);
-            setLabel('Email copied');
+            copyButton.textContent = 'Copied ✓';
+
+            setTimeout(() => {
+                copyButton.textContent = 'Copy Email';
+            }, 1500);
         } catch {
-            setLabel('Copy failed');
+            copyButton.textContent = 'Copy failed';
         }
-        setTimeout(() => setLabel('Copy email'), 1500);
     });
+
     return copyButton;
 }
 
@@ -842,11 +834,11 @@ function cardIcon(kind) {
 
 function makeCard(employee) {
     const card = document.createElement('article');
-    card.className = 'employee-card expanded-card';
+    card.className = 'employee-card';
     const main = document.createElement('div');
     main.className = 'card-main';
     const top = document.createElement('div');
-    top.className = 'card-top employee-card-header';
+    top.className = 'card-top';
     top.append(makeAvatar(employee));
     const topActions = document.createElement('div');
     topActions.className = 'card-top-actions';
@@ -868,10 +860,10 @@ function makeCard(employee) {
         try { localStorage.setItem(key, String(saved)); } catch {}
         updateBookmark();
     });
-    topActions.append(bookmark);
+    topActions.append(makeDepartmentBadge(employee), bookmark);
     top.append(topActions);
     const identity = document.createElement('div');
-    identity.className = 'card-identity employee-identity';
+    identity.className = 'card-identity';
     const nameRow = document.createElement('div');
     nameRow.className = 'card-name-row';
     const name = document.createElement('h3');
@@ -891,8 +883,7 @@ function makeCard(employee) {
     const title = document.createElement('p');
     title.className = 'employee-title';
     title.textContent = employee.title;
-    identity.append(nameRow, title, makeDepartmentBadge(employee));
-    top.insertBefore(identity, topActions);
+    identity.append(nameRow, title);
     const details = document.createElement('div');
     details.className = 'card-details';
     function detail(kind, value) {
@@ -913,72 +904,8 @@ function makeCard(employee) {
     details.append(detail('people', Number.isInteger(reports) && reports >= 0
         ? 'Manages ' + reports + ' direct reports'
         : employee.department || 'Department not listed'));
-    // Jacquese's branches 20/21: four visible sections on the larger card.
-    const profileGrid = document.createElement('div');
-    profileGrid.className = 'employee-profile-grid';
-    function section(title, kind) {
-        const block = document.createElement('section');
-        block.className = 'employee-profile-section ' + kind;
-        const heading = document.createElement('h4');
-        heading.textContent = title;
-        block.append(heading);
-        block.setAttribute('aria-label', title + ' for ' + employee.name);
-        return block;
-    }
-    const overview = section('Overview', 'employee-overview-section');
-    const bio = document.createElement('p');
-    bio.className = 'employee-card-bio';
-    bio.textContent = employee.bio || 'No overview listed.';
-    overview.append(bio, details);
-    if (employee.joiningDate) {
-        const date = new Date(employee.joiningDate + 'T12:00:00Z');
-        if (!Number.isNaN(date.getTime())) {
-            details.append(detail('people', 'Joined ' + date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' })));
-        }
-    }
-    const contactSection = section('Contact', 'employee-contact-section');
-    if (employee.email) {
-        const emailRow = document.createElement('div');
-        emailRow.className = 'employee-email-row';
-        emailRow.append(makeEmployeeEmail(employee), makeCopyButton(employee, true));
-        contactSection.append(emailRow);
-    } else {
-        const empty = document.createElement('p');
-        empty.textContent = 'Email not listed.';
-        contactSection.append(empty);
-    }
-    const socialLinks = makeSocialLinks(employee);
-    socialLinks.querySelectorAll('a').forEach(link => {
-        const image = link.querySelector('img');
-        if (image) {
-            const text = document.createElement('span');
-            text.textContent = image.alt;
-            image.alt = '';
-            link.append(text);
-        }
-    });
-    if (socialLinks.children.length) contactSection.append(socialLinks);
-    const skillsSection = section('Skills', 'employee-skills-section');
-    const skills = Array.isArray(employee.skills) ? employee.skills.filter(skill => typeof skill === 'string' && skill.trim()) : [];
-    skillsSection.append(makeSkillBadges(skills));
-    const projectsSection = section('Projects', 'employee-projects-section');
-    const projects = Array.isArray(employee.projects) ? employee.projects.filter(project => typeof project === 'string' && project.trim() && project.trim().toLowerCase() !== 'tbd') : [];
-    if (projects.length) {
-        const list = document.createElement('ul');
-        list.className = 'employee-project-list';
-        for (const project of projects) {
-            const item = document.createElement('li');
-            item.textContent = project;
-            list.append(item);
-        }
-        projectsSection.append(list);
-    } else {
-        const empty = document.createElement('p');
-        empty.textContent = 'No projects listed.';
-        projectsSection.append(empty);
-    }
-    profileGrid.append(overview, contactSection, skillsSection, projectsSection);
-    main.append(top, profileGrid);
+    const skills = Array.isArray(employee.skills) ? employee.skills.filter(skill => typeof skill === 'string' && skill.trim()).slice(0, 3) : [];
+    main.append(top, identity, details, makeSkillBadges(skills));
     const footer = document.createElement('div');
     footer.className = 'card-footer';
     const actions = document.createElement('div');
@@ -1001,7 +928,7 @@ function makeCard(employee) {
     });
     actions.append(email, contact);
     const profile = makeProfileButton(employee);
-    profile.replaceChildren(document.createTextNode('View Profile '), cardIcon('arrow'));
+    profile.replaceChildren(document.createTextNode('Profile '), cardIcon('arrow'));
     footer.append(actions, profile);
     card.append(main, footer);
     return card;

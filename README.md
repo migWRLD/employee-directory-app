@@ -23,7 +23,7 @@ Directory, Departments, About, and Contact are separate hash-selected views in `
 - Search by name, role, email, department, or skill.
 - Combine search with a department filter and quick department pills.
 - Sort names A–Z or Z–A, clear filters, and switch between Grid and Table.
-- View larger employee cards with Overview, Contact, Skills, and Projects sections. Cards show saved bio and contact details, all listed skills, location and local time, and project names when available; missing information has a clear empty state.
+- View employee photos or initials, role and department information, location, and up to three skill badges on each card.
 - Open a profile with Overview, Contact, Skills, and Projects tabs. Empty project lists show a placeholder.
 - Use email links, copy-email controls, and available professional profile links.
 - Save individual cards with browser-local bookmarks.
