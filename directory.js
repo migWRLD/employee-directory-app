@@ -678,25 +678,33 @@ function isSafeExternalUrl(link) {
     }
 }
 
-function makeCopyButton(employee) {
+function makeCopyButton(employee, iconOnly = false) {
     const copyButton = document.createElement('button');
-    copyButton.className = 'copy-email';
+    copyButton.className = 'copy-email' + (iconOnly ? ' copy-email-icon' : '');
     copyButton.type = 'button';
-    copyButton.textContent = 'Copy Email';
-
+    const label = document.createElement('span');
+    if (iconOnly) {
+        copyButton.append(cardIcon('copy'));
+        label.className = 'visually-hidden';
+        label.setAttribute('role', 'status');
+        copyButton.append(label);
+    }
+    function setLabel(text) {
+        copyButton.setAttribute('aria-label', text + ' for ' + employee.name);
+        copyButton.title = text;
+        if (iconOnly) label.textContent = text;
+        else copyButton.textContent = text;
+    }
+    setLabel('Copy email');
     copyButton.addEventListener('click', async () => {
         try {
             await navigator.clipboard.writeText(employee.email);
-            copyButton.textContent = 'Copied ✓';
-
-            setTimeout(() => {
-                copyButton.textContent = 'Copy Email';
-            }, 1500);
+            setLabel('Email copied');
         } catch {
-            copyButton.textContent = 'Copy failed';
+            setLabel('Copy failed');
         }
+        setTimeout(() => setLabel('Copy email'), 1500);
     });
-
     return copyButton;
 }
 
@@ -924,7 +932,6 @@ function makeCard(employee) {
     contact.append(cardIcon('message'));
     contact.addEventListener('click', () => {
         openProfile(employee);
-        document.querySelector('#profile-tab-1')?.click();
     });
     actions.append(email, contact);
     const profile = makeProfileButton(employee);
@@ -995,140 +1002,108 @@ function openProfile(employee) {
     modal.setAttribute('role', 'dialog');
     modal.setAttribute('aria-modal', 'true');
     modal.setAttribute('aria-labelledby', 'employee-profile-name');
-
     const content = document.createElement('div');
-    content.className = 'profile-modal-content';
-
+    content.className = 'profile-modal-content full-profile';
     const closeButton = document.createElement('button');
     closeButton.className = 'modal-close';
     closeButton.type = 'button';
     closeButton.textContent = '×';
     closeButton.setAttribute('aria-label', 'Close profile');
-
-    const image = makeAvatar(employee, 'profile-avatar');
-
+    const header = document.createElement('div');
+    header.className = 'profile-header';
+    const identity = document.createElement('div');
     const name = document.createElement('h2');
     name.id = 'employee-profile-name';
     name.textContent = employee.name;
-
     const title = document.createElement('p');
-    title.textContent = employee.title;
+    title.textContent = employee.title || 'Role not listed';
+    identity.append(name, title, makeDepartmentBadge(employee));
+    header.append(makeAvatar(employee, 'profile-avatar'), identity);
 
-    const department = document.createElement('span');
-    department.className = 'department-badge';
-    department.textContent = employee.department;
-
+    // Jacquese's expanded 2-by-2 layout belongs in the profile, not on each compact card.
+    const grid = document.createElement('div');
+    grid.className = 'full-profile-grid';
+    function section(label, key) {
+        const block = document.createElement('section');
+        block.className = 'profile-panel full-profile-section';
+        block.id = 'profile-section-' + key;
+        const heading = document.createElement('h3');
+        heading.id = 'profile-heading-' + key;
+        heading.textContent = label;
+        block.setAttribute('aria-labelledby', heading.id);
+        block.append(heading);
+        grid.append(block);
+        return block;
+    }
+    const overview = section('Overview', 'overview');
     const bio = document.createElement('p');
     bio.className = 'profile-bio';
-    bio.textContent =
-        employee.bio ||
-        `${employee.name} is a ${employee.title} on the ${employee.department} team.`;
+    bio.textContent = employee.bio || 'No overview listed.';
+    const metadata = document.createElement('dl');
+    metadata.className = 'profile-metadata';
+    function detail(label, value) {
+        const row = document.createElement('div');
+        const term = document.createElement('dt');
+        term.textContent = label;
+        const definition = document.createElement('dd');
+        if (value instanceof Node) definition.append(value);
+        else definition.textContent = value;
+        row.append(term, definition);
+        metadata.append(row);
+    }
+    detail('Location', employee.location || 'Location not listed');
+    if (window.CardLocalTime) detail('Local time', window.CardLocalTime.create(employee));
+    if (employee.timeZone) detail('Time zone', employee.timeZone);
+    if (employee.joiningDate) {
+        const date = new Date(employee.joiningDate + 'T12:00:00Z');
+        if (!Number.isNaN(date.getTime())) detail('Joined', date.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric',timeZone:'UTC'}));
+    }
+    if (Number.isInteger(employee.directReports) && employee.directReports >= 0) detail('Direct reports', String(employee.directReports));
+    overview.append(bio, metadata);
 
-    const skillsHeading = document.createElement('h3');
-    skillsHeading.className = 'skills-heading';
-    skillsHeading.textContent = 'Skills';
-
-    const skills = makeSkillBadges(employee.skills);
-    skills.classList.add('profile-skills');
-
-    const email = document.createElement('p');
-
-    const emailLink = document.createElement('a');
-    emailLink.href = `mailto:${employee.email}`;
-    emailLink.textContent = employee.email;
-
-    email.appendChild(emailLink);
-
-    const socialLinks = document.createElement('div');
-    socialLinks.className = 'social-links';
-
-    const socialProfiles = [
-        {
-            name: 'LinkedIn',
-            url: employee.linkedin
-        },
-        {
-            name: 'GitHub',
-            url: employee.github
-        },
-        {
-            name: 'Portfolio',
-            url: employee.portfolio
-        }
-    ];
-
-    socialProfiles.forEach(profile => {
-        if (!isSafeExternalUrl(profile.url)) {
-            return;
-        }
-
+    const contact = section('Contact', 'contact');
+    if (employee.email) {
+        const emailRow = document.createElement('div');
+        emailRow.className = 'profile-email-row';
+        emailRow.append(makeEmployeeEmail(employee), makeCopyButton(employee, true));
+        contact.append(emailRow);
+    } else {
+        const empty = document.createElement('p');
+        empty.textContent = 'Email not listed.';
+        contact.append(empty);
+    }
+    const links = document.createElement('div');
+    links.className = 'social-links';
+    for (const [label, url] of [['LinkedIn',employee.linkedin],['GitHub',employee.github],['Portfolio',employee.portfolio]]) {
+        if (!isSafeExternalUrl(url)) continue;
         const link = document.createElement('a');
-
-        link.href = profile.url;
-        link.textContent = profile.name;
+        link.href = url;
+        link.textContent = label;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-
-        socialLinks.appendChild(link);
-    });
-
-    const header = document.createElement('div');
-    header.className = 'profile-header';
-    const details = document.createElement('div');
-    details.append(name, title, department);
-    header.append(image);
-    header.append(details);
-    const tabs = document.createElement('div');
-    tabs.className = 'profile-tabs';
-    tabs.setAttribute('role', 'tablist');
-    tabs.setAttribute('aria-label', 'Profile details');
-    const panels = document.createElement('div');
-    const buttons = [];
-    const sections = [];
-    function activate(index, focus = false) {
-        buttons.forEach((button, i) => {
-            button.classList.toggle('active', i === index);
-            button.setAttribute('aria-selected', String(i === index));
-            button.tabIndex = i === index ? 0 : -1;
-            sections[i].hidden = i !== index;
-        });
-        if (focus) buttons[index].focus();
+        links.append(link);
     }
-    ['Overview', 'Contact', 'Skills', 'Projects'].forEach((label, index) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'profile-tab';
-        button.id = 'profile-tab-' + index;
-        button.textContent = label;
-        button.setAttribute('role', 'tab');
-        button.setAttribute('aria-controls', 'profile-panel-' + index);
-        const panel = document.createElement('section');
-        panel.className = 'profile-panel';
-        panel.id = 'profile-panel-' + index;
-        panel.tabIndex = 0;
-        panel.setAttribute('role', 'tabpanel');
-        panel.setAttribute('aria-labelledby', button.id);
-        button.addEventListener('click', () => activate(index));
-        button.addEventListener('keydown', event => {
-            let next;
-            if (event.key === 'ArrowRight') next = (index + 1) % 4;
-            if (event.key === 'ArrowLeft') next = (index + 3) % 4;
-            if (event.key === 'Home') next = 0;
-            if (event.key === 'End') next = 3;
-            if (next !== undefined) { event.preventDefault(); activate(next, true); }
-        });
-        buttons.push(button); sections.push(panel); tabs.append(button); panels.append(panel);
-    });
-    sections[0].append(bio);
-    sections[1].append(email, socialLinks);
-    sections[2].append(skillsHeading, skills);
+    contact.append(links);
+    const skillsSection = section('Skills', 'skills');
+    const skills = makeSkillBadges(Array.isArray(employee.skills) ? employee.skills.filter(skill => typeof skill === 'string' && skill.trim()) : []);
+    skills.classList.add('profile-skills');
+    skillsSection.append(skills);
+    const projectsSection = section('Projects', 'projects');
+    const projects = Array.isArray(employee.projects) ? employee.projects.filter(project => typeof project === 'string' && project.trim() && project.trim().toLowerCase() !== 'tbd') : [];
     const projectList = document.createElement('ul');
-    const projects = Array.isArray(employee.projects) ? employee.projects.filter(p => typeof p === 'string' && p.trim() && p.trim().toLowerCase() !== 'tbd') : [];
-    for (const project of projects) { const item = document.createElement('li'); item.textContent = project; projectList.append(item); }
-    if (!projects.length) { const item = document.createElement('li'); item.textContent = 'No projects listed.'; projectList.append(item); }
-    sections[3].append(projectList);
-    activate(0);
-    content.append(closeButton, header, tabs, panels);
+    projectList.className = 'profile-project-list';
+    for (const project of projects) {
+        const item = document.createElement('li');
+        item.textContent = project;
+        projectList.append(item);
+    }
+    if (!projects.length) {
+        const item = document.createElement('li');
+        item.textContent = 'No projects listed.';
+        projectList.append(item);
+    }
+    projectsSection.append(projectList);
+    content.append(closeButton, header, grid);
 
     modal.appendChild(content);
     document.body.appendChild(modal);
