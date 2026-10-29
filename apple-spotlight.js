@@ -49,10 +49,6 @@
     function setPlaceholder(text = 'Search people') {
         if (placeholder.textContent !== text) {
             placeholder.textContent = text;
-            placeholder.classList.remove('is-changing');
-            // Restart the small blur/slide transition when the hovered label changes.
-            void placeholder.offsetWidth;
-            placeholder.classList.add('is-changing');
         }
         placeholder.hidden = Boolean(input.value);
     }
@@ -305,20 +301,10 @@
         }
     }).observe(root);
     input.addEventListener('input', () => { if (voiceActive) stopVoice(); });
-    const size = root.querySelector('#spotlight-size');
-    const width = root.querySelector('#spotlight-width');
-    const opacity = root.querySelector('#spotlight-opacity');
-    const output = root.querySelector('#spotlight-opacity-value');
-    function updateAppearance() {
-        root.dataset.size = ['compact', 'regular', 'large'].includes(size.value) ? size.value : 'compact';
-        root.style.setProperty('--spotlight-width', `${Number(width.value) || 1024}px`);
-        const surfaceOpacity = .88 * (1 - Number(opacity.value) / 100);
-        root.style.setProperty('--spotlight-opacity', String(surfaceOpacity));
-        root.dataset.glass = String(surfaceOpacity < .5);
-        output.value = `${opacity.value}%`;
-    }
-    [size, width].forEach(control => control.addEventListener('change', updateAppearance));
-    opacity.addEventListener('input', updateAppearance);
-    updateAppearance();
+    // Fixed appearance requested for the Add Teammate page.
+    root.dataset.size = 'compact';
+    root.style.setProperty('--spotlight-width', '1024px');
+    root.style.setProperty('--spotlight-opacity', '.88');
+    root.dataset.glass = 'false';
     render();
 })();

@@ -55,6 +55,41 @@
     cursor.textContent = '|';
     visual.append(typed, cursor);
     description.replaceChildren(readable, reserve, visual);
+    // Magic UI MorphingText's blur/opacity blend, scoped to the three tagline phrases.
+    const note = hero.querySelector('.people-hero-note');
+    const phrases = ['A face.', 'A story.', 'A new connection.'];
+    const morphVisual = document.createElement('span');
+    morphVisual.className = 'tagline-morph-visual';
+    morphVisual.setAttribute('aria-hidden', 'true');
+    const morphFrom = document.createElement('span');
+    const morphTo = document.createElement('span');
+    morphFrom.textContent = phrases[0];
+    morphTo.textContent = phrases[1];
+    morphVisual.append(morphFrom, morphTo);
+    if (note) {
+        const accessibleNote = document.createElement('span');
+        accessibleNote.className = 'visually-hidden';
+        accessibleNote.textContent = note.textContent;
+        note.classList.add('tagline-morph');
+        note.replaceChildren(accessibleNote, morphVisual);
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('tagline-filter');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.innerHTML = '<defs><filter id="people-tagline-threshold"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 255 -140"/></filter></defs>';
+        note.append(svg);
+    }
+    function drawMorph() {
+        const cycle = 2; // 1.5s morph, .5s cooldown, matching the reference.
+        const time = elapsed / 1000;
+        const index = Math.floor(time / cycle) % phrases.length;
+        const fraction = Math.max(0, Math.min(1, (time % cycle - .5) / 1.5));
+        morphFrom.textContent = phrases[index];
+        morphTo.textContent = phrases[(index + 1) % phrases.length];
+        morphFrom.style.filter = `blur(${fraction === 1 ? 100 : Math.min(8 / (1 - fraction) - 8, 100)}px)`;
+        morphTo.style.filter = `blur(${fraction === 0 ? 100 : Math.min(8 / fraction - 8, 100)}px)`;
+        morphFrom.style.opacity = String(Math.pow(1 - fraction, .4));
+        morphTo.style.opacity = String(Math.pow(fraction, .4));
+    }
     const letters = Array.from(sentence);
     let frame = null, last = null, elapsed = 0, visible = true;
     let count = 0, deleting = false, nextLetterAt = 0;
@@ -79,6 +114,7 @@
             char.style.textShadow = split > .15
                 ? `${-split}px ${split * .3}px ${effect * 1.5}px rgba(0,200,255,.7), ${split}px ${-split * .3}px ${effect * 1.5}px rgba(255,0,128,.7), 0 0 ${10 * effect}px rgba(255,255,255,${effect * .25})` : '';
         });
+        drawMorph();
         // TypingLoopText's 70ms typing, 40ms deletion, and 1.5s full-text pause.
         if (elapsed >= nextLetterAt) {
             if (!deleting && count < letters.length) { count++; nextLetterAt = elapsed + 70; }
@@ -94,7 +130,13 @@
         frame = null; last = null;
         hero.dataset.motionPaused = String(motion.matches || !visible || document.hidden);
         cursor.hidden = motion.matches;
-        if (motion.matches) { clearPrism(); typed.textContent = sentence; return; }
+        if (motion.matches) {
+            clearPrism(); typed.textContent = sentence;
+            morphFrom.textContent = phrases.join(' ');
+            morphFrom.style.filter = 'none'; morphFrom.style.opacity = '1';
+            morphTo.style.opacity = '0';
+            return;
+        }
         if (visible && !document.hidden) frame = requestAnimationFrame(draw);
     }
     motion.addEventListener('change', sync);

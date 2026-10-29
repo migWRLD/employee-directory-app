@@ -77,8 +77,9 @@ test('default appearance is small, long width and lightly glassy at 0 percent', 
         const d = w.document, root = d.getElementById('teammate-spotlight');
         assert.equal(root.dataset.size, 'compact');
         assert.equal(root.style.getPropertyValue('--spotlight-width'), '1024px');
-        assert.equal(d.getElementById('spotlight-opacity').value, '0');
-        assert.equal(root.style.getPropertyValue('--spotlight-opacity'), '0.88');
+        assert.equal(d.querySelector('.spotlight-appearance'), null);
+        assert.equal(d.getElementById('spotlight-help'), null);
+        assert.equal(Number(root.style.getPropertyValue('--spotlight-opacity')), .88);
     } finally { w.close(); }
 });
 async function directory(url) {
@@ -166,6 +167,7 @@ test('reduced-motion hero keeps complete accessible copy and does not start anim
         assert.equal(d.querySelector('.typing-copy').textContent, 'Every teammate brings something different. Give them a place to share it.|');
         assert.equal(d.querySelector('.typing-cursor').hidden, true);
         assert.equal(d.querySelector('.people-hero').dataset.motionPaused, 'true');
+        assert.equal(d.querySelector('.tagline-morph-visual>span').textContent, 'A face. A story. A new connection.');
         assert.ok([...d.querySelectorAll('.prism-char')].every(char => !char.style.transform));
     } finally { w.close(); }
 });

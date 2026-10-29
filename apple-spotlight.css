@@ -16,7 +16,7 @@
 #teammate-spotlight #spotlight-search{border:0;border-radius:0;background:transparent;color:var(--spotlight-ink);min-height:44px;padding:0;font-size:var(--spotlight-font);font-weight:400;line-height:1.4;width:100%;box-shadow:none}
 #spotlight-search::-webkit-search-cancel-button{cursor:pointer}
 .spotlight-placeholder{position:absolute;inset:0;display:flex;align-items:center;pointer-events:none;color:var(--spotlight-muted);font-size:var(--spotlight-font);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.spotlight-placeholder.is-changing{animation:spotlight-placeholder .2s ease-out}
+
 .spotlight-shortcuts{display:flex;gap:16px;max-width:0;opacity:0;overflow:hidden;visibility:hidden;transition:max-width .65s cubic-bezier(.16,1,.3,1),opacity .2s,visibility .2s;flex-shrink:0}
 .apple-spotlight:not([data-searching="true"]) .spotlight-row:is(:hover,:focus-within) .spotlight-shortcuts{max-width:320px;opacity:1;visibility:visible;overflow:visible}
 .spotlight-shortcut{display:grid;place-items:center;width:var(--spotlight-height);height:var(--spotlight-height);border-radius:50%;text-decoration:none;flex-shrink:0;transition:transform .5s cubic-bezier(.16,1,.3,1);transform:translateX(-20px) scale(.7)}
@@ -35,14 +35,14 @@
 .spotlight-chevron{margin-left:auto;opacity:0}
 .spotlight-result:is(:hover,:focus-visible) .spotlight-chevron{opacity:1}
 .spotlight-empty{padding:16px;color:var(--spotlight-ink);font-size:14px;line-height:1.6}
-.spotlight-help{color:#c3bcce;font-size:12px;text-align:center;margin:14px 0 0}
-.spotlight-appearance{margin:12px auto 0;max-width:520px;color:#e4deee;font-size:12px;text-align:center}
-.spotlight-appearance summary{cursor:pointer;min-height:44px;display:list-item;list-style-position:inside;padding:12px;border-radius:10px;width:fit-content;margin:auto}
-.spotlight-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:16px;background:#15131ce6;border:1px solid #5a5268;border-radius:16px;text-align:left}
-.spotlight-controls label{margin:0;color:#eee8f5;flex:1 1 100px;font-size:12px}
-.spotlight-controls select{display:block;width:100%;min-height:44px;border-radius:8px;border:1px solid #756a84;background:#24202e;color:#fff;font:inherit;margin-top:6px;padding:8px}
-#teammate-spotlight .spotlight-controls input[type="range"]{padding:0;min-height:44px;background:transparent;border:0;accent-color:#ceafff;width:100%;cursor:pointer}
-.spotlight-opacity-control output{float:right}
+
+
+
+
+
+
+
+
 .people-hero .apple-spotlight :is(input,a,summary,select):focus-visible{outline:3px solid #9276f5;outline-offset:3px}
 #spotlight-search:focus-visible{outline-offset:2px!important}
 @keyframes spotlight-enter{from{opacity:0;filter:blur(20px);transform:translateY(-10px) scale(1.1)}to{opacity:1;filter:blur(0);transform:none}}
@@ -64,9 +64,9 @@
 .typing-cursor{color:#7c5cff;animation:typing-blink 1s step-end infinite}
 @keyframes typing-blink{50%{opacity:0}}
 #teammate-spotlight .spotlight-input-row{padding-right:6px;gap:10px}
-#teammate-spotlight .spotlight-voice{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:7px;border:1px solid #ffffff30;border-radius:50%;background:#0c0e12;color:#fff;box-shadow:inset 0 1px 0 #fff4}
-#teammate-spotlight .spotlight-voice:hover{background:#222a3a}
-#teammate-spotlight .spotlight-voice[aria-pressed="true"]{background:#152b4b;box-shadow:0 0 0 2px #7eb8ff,inset 0 1px 0 #fff4}
+#teammate-spotlight .spotlight-voice{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;min-height:44px;padding:7px;border:0;border-radius:50%;background:transparent;color:#7c5cff;box-shadow:none}
+#teammate-spotlight .spotlight-voice:hover{background:transparent;filter:drop-shadow(0 0 3px #7c5cff66)}
+#teammate-spotlight .spotlight-voice[aria-pressed="true"]{background:transparent;box-shadow:none;filter:drop-shadow(0 0 4px #7c5cff)}
 .voice-waveform{width:28px;height:26px;overflow:visible}
 .voice-waveform rect{transform-box:fill-box;transform-origin:center;animation:voice-wave .8s ease-in-out infinite alternate;animation-play-state:paused}
 .spotlight-voice[aria-pressed="true"] rect{animation-play-state:running}
@@ -77,3 +77,16 @@
 @media(prefers-reduced-motion:reduce){.voice-waveform rect,.typing-cursor{animation:none}.people-hero h1 .prism-char{will-change:auto}}
 
 .people-hero[data-motion-paused="true"] .typing-cursor{animation-play-state:paused}
+
+/* Shiny Text: a 2.2-second sweep on the search placeholder, without changing input text. */
+@supports ((background-clip:text) or (-webkit-background-clip:text)){
+  .spotlight-placeholder{background-image:linear-gradient(105deg,var(--spotlight-ink) 35%,#7c5cff 50%,var(--spotlight-ink) 65%);background-size:200% 100%;background-repeat:no-repeat;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:spotlight-shine 2.2s linear infinite}
+}
+@keyframes spotlight-shine{from{background-position:-50% 0}to{background-position:150% 0}}
+.people-hero-note.tagline-morph{position:relative;min-height:20px;line-height:20px}
+.tagline-morph-visual{position:relative;display:block;width:100%;height:20px;filter:url(#people-tagline-threshold) blur(.6px)}
+.tagline-morph-visual>span{position:absolute;inset:0;text-align:center;color:inherit}
+.tagline-morph-visual>span+span{opacity:0}
+.tagline-filter{position:absolute;width:0;height:0;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.spotlight-placeholder{animation:none!important;background:none;-webkit-text-fill-color:currentColor;color:var(--spotlight-ink)}.tagline-morph-visual{filter:none}}
+.people-hero[data-motion-paused="true"] .spotlight-placeholder{animation-play-state:paused}
