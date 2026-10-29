@@ -306,14 +306,19 @@
         promptTimer = null;
         if (motion.matches || document.hidden || !promptVisible || input.value) return;
         promptTimer = window.setTimeout(() => {
+            if (motion.matches || document.hidden || !promptVisible || input.value) { schedulePrompt(); return; }
             const choices = searchPrompts.filter(text => text !== currentPrompt);
             currentPrompt = choices[Math.floor(Math.random() * choices.length)];
             // Replace the complete two-word prompt at once; keep the shine effect.
             setPlaceholder();
+            placeholder.classList.add('is-prompt-blinking');
             schedulePrompt();
-        }, 3200);
+        }, 4800);
     }
     input.addEventListener('input', () => { if (voiceActive) stopVoice(); schedulePrompt(); });
+    placeholder.addEventListener('animationend', event => {
+        if (event.animationName === 'spotlight-prompt-blink') placeholder.classList.remove('is-prompt-blinking');
+    });
     motion.addEventListener?.('change', schedulePrompt);
     document.addEventListener('visibilitychange', schedulePrompt);
     window.addEventListener('pagehide', () => { window.clearTimeout(promptTimer); promptTimer = null; });

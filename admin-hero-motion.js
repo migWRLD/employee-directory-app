@@ -79,10 +79,11 @@
         note.append(svg);
     }
     function drawMorph() {
-        const cycle = 2; // 1.5s morph, .5s cooldown, matching the reference.
+        const morphDuration = 2.4, holdDuration = 1.2;
+        const cycle = morphDuration + holdDuration;
         const time = elapsed / 1000;
         const index = Math.floor(time / cycle) % phrases.length;
-        const fraction = Math.max(0, Math.min(1, (time % cycle - .5) / 1.5));
+        const fraction = Math.max(0, Math.min(1, (time % cycle - holdDuration) / morphDuration));
         morphFrom.textContent = phrases[index];
         morphTo.textContent = phrases[(index + 1) % phrases.length];
         morphFrom.style.filter = `blur(${fraction === 1 ? 100 : Math.min(8 / (1 - fraction) - 8, 100)}px)`;
