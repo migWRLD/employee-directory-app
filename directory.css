@@ -98,3 +98,35 @@ body.darkMode .employee-card{background:var(--panel);color:var(--ink)}body.darkM
 .department-directory-link{align-self:flex-start;padding:4px 2px;color:var(--primary);font-size:12px;font-weight:600;text-decoration:none;border-radius:4px}
 .department-directory-link:hover{text-decoration:underline}
 .department-directory-link:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+/* Jacquese's expanded four-section layout is shown only after opening Profile. */
+.profile-modal-content.full-profile{width:min(960px,100%);padding:32px;max-height:90vh;max-height:90svh;overscroll-behavior:contain}
+.full-profile .profile-header{gap:24px;margin-bottom:8px;padding:0 36px 26px 0;border-bottom:1px solid var(--line)}
+.full-profile .profile-header .profile-avatar{width:112px;height:112px;flex:0 0 112px;font-size:32px}
+.full-profile .profile-header>div{min-width:0}
+.full-profile .profile-header h2{font-size:30px;line-height:1.2;overflow-wrap:anywhere}
+.full-profile .profile-header p{font-size:17px;overflow-wrap:anywhere}
+.full-profile .profile-header .department-badge{font-size:13px;padding:6px 10px}
+.full-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.full-profile-section{min-width:0;min-height:160px;padding:24px 24px 28px 0}
+.full-profile-section:nth-child(even){padding-right:0;padding-left:24px;border-left:1px solid var(--line)}
+.full-profile-section:nth-child(n+3){border-top:1px solid var(--line)}
+.full-profile-section h3{margin:0 0 18px;font-size:19px;line-height:1.3;letter-spacing:.04em;text-transform:uppercase}
+.full-profile-section p{font-size:15px;line-height:1.7;color:var(--muted)}
+.full-profile .profile-bio{white-space:pre-wrap}
+.profile-metadata{display:grid;gap:14px;margin:22px 0 0}
+.profile-metadata>div{min-width:0}
+.profile-metadata dt{font-size:12px;font-weight:600;color:var(--muted)}
+.profile-metadata dd{margin:3px 0 0;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.profile-email-row{display:flex;align-items:center;gap:10px;min-width:0}
+.profile-email-row .employee-email{font-size:15px;color:var(--primary);min-width:0}
+.full-profile .copy-email-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;min-width:44px;min-height:44px;padding:8px;background:var(--soft);color:var(--primary)}
+.full-profile .social-links{gap:8px;margin-top:18px}
+.full-profile .social-links a{min-height:44px;padding:7px 12px;max-width:100%;background:var(--soft);font-size:14px}
+.full-profile .social-links a:hover{background:var(--primary-soft)}
+.full-profile .profile-skills{gap:8px;font-size:15px;color:var(--muted)}
+.full-profile .skill-badge{font-size:14px;padding:7px 10px}
+.profile-project-list{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.profile-project-list li{border-bottom:1px solid var(--line);padding-bottom:12px;font-size:15px;color:var(--muted);line-height:1.5;overflow-wrap:anywhere}
+.full-profile .modal-close{width:44px;height:44px;z-index:1}
+@media(max-width:640px){.profile-modal-content.full-profile{padding:22px 18px}.full-profile .profile-header{gap:14px;padding:0 32px 20px 0;align-items:flex-start}.full-profile .profile-header .profile-avatar{width:70px;height:70px;flex-basis:70px;font-size:24px}.full-profile .profile-header h2{font-size:24px}.full-profile .profile-header p{font-size:15px}.full-profile-grid{grid-template-columns:1fr}.full-profile-section,.full-profile-section:nth-child(even),.full-profile-section:nth-child(n+3){min-height:0;padding:22px 0;border-left:0;border-top:1px solid var(--line)}.full-profile-section:first-child{border-top:0}}
