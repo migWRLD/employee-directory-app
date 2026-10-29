@@ -1221,6 +1221,8 @@ if (clearButton) {
     });
 }
 
+// Spotlight links select a profile by its stable directory ID after data loads.
+let requestedProfileId = new URLSearchParams(window.location.search).get('employee');
 let directoryRequest = 0;
 async function loadEmployees() {
     const request = ++directoryRequest;
@@ -1251,6 +1253,15 @@ async function loadEmployees() {
         departmentFilter.value = [...departmentFilter.options].some(o => o.value === selected) ? selected : 'all';
         renderEmployees();
         status.hidden = true;
+        if (requestedProfileId !== null) {
+            const selectedEmployee = employees.find(employee => String(employee.id) === requestedProfileId);
+            requestedProfileId = null;
+            if (selectedEmployee) openProfile(selectedEmployee);
+            else {
+                status.textContent = 'That profile is no longer available. Search the directory to find another teammate.';
+                status.hidden = false;
+            }
+        }
     } catch {
         if (request !== directoryRequest) return;
         status.textContent = employees.length

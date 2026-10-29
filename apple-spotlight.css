@@ -8,7 +8,7 @@
 .apple-spotlight[data-size="large"]{--spotlight-height:80px;--spotlight-font:28px}
 .apple-spotlight[data-glass="true"]{--spotlight-ink:#fff;--spotlight-muted:#fff}
 .spotlight-row{display:flex;align-items:flex-start;gap:16px}
-.spotlight-panel,.spotlight-shortcut{background:rgba(245,245,245,var(--spotlight-opacity,1));color:var(--spotlight-ink);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(190,190,200,.5);box-shadow:0 12px 40px #0003}
+.spotlight-panel,.spotlight-shortcut{background:rgba(245,245,245,var(--spotlight-opacity,.88));color:var(--spotlight-ink);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(190,190,200,.5);box-shadow:0 12px 40px #0003}
 .spotlight-panel{border-radius:30px;min-width:0;flex:1;overflow:hidden}
 .spotlight-input-row{display:flex;align-items:center;gap:12px;padding:0 24px;height:var(--spotlight-height)}
 .spotlight-search-icon{width:28px;height:28px;flex-shrink:0}
@@ -50,3 +50,5 @@
 @keyframes spotlight-result{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media(max-width:700px),(hover:none){.spotlight-row{flex-wrap:wrap;justify-content:center;gap:12px}.spotlight-panel{flex-basis:100%}.spotlight-shortcuts{visibility:visible;max-width:none;opacity:1;overflow:visible;gap:12px}.spotlight-shortcut{transform:none;width:52px;height:52px}.apple-spotlight[data-searching="true"] .spotlight-shortcuts{display:none}.apple-spotlight{margin-top:28px}.spotlight-input-row{padding-inline:20px}}
 @media(prefers-reduced-motion:reduce){.apple-spotlight,.spotlight-placeholder,.spotlight-result{animation:none}.spotlight-shortcuts,.spotlight-shortcut{transition:none}}
+
+.spotlight-retry{margin:0 16px 12px;background:#fff;color:#111;border-color:#aaa}
