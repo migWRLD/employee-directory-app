@@ -1,10 +1,50 @@
 const searchInput = document.querySelector('#search');
 const departmentFilter = document.querySelector('#department-filter');
+
+const teamSearchInput =
+    document.querySelector('#team-search');
+
+const divisionFilter =
+    document.querySelector('#division-filter');
+
+const clearAllTeams =
+    document.querySelector('#clear-all-teams');
+
+const departmentGrid =
+    document.querySelector('#department-grid');
+
+const teamResultsCount =
+    document.querySelector('#team-results-count');
+
+const teamEmptyState =
+    document.querySelector('#team-empty-state');
+
+const createTeamButton =
+    document.querySelector('#create-team-button');
+
+const createTeamPanel =
+    document.querySelector('#create-team-panel');
+
+const createTeamForm =
+    document.querySelector('#create-team-form');
+
+const cancelCreateTeam =
+    document.querySelector('#cancel-create-team');
+
+const teamSaveMessage =
+    document.querySelector('#team-save-message');
+
+function normalizeText(value = '') {
+    return String(value)
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 const sortFilter = document.querySelector('#sort-filter');
 const clearButton = document.querySelector('#clear-button, #clearSearch');
 const resultsCount = document.querySelector('#results-count');
 const employeeList = document.querySelector('#employee-list');
-const departmentGrid = document.querySelector('#department-grid');
 const departmentMembers = document.querySelector('#department-members');
 
 // Keep the existing logo image and directory link, with a small pointer tilt.
@@ -32,6 +72,7 @@ if (peopleLogo) {
 let activeDepartment = null;
 
 let employees = [];
+let filteredDepartmentEmployees = [];
 let directoryView = 'grid';
 try { directoryView = localStorage.getItem('directoryView') === 'table' ? 'table' : 'grid'; } catch {}
 
@@ -186,22 +227,22 @@ const iconShapes = {
 };
 
 const departmentStyles = [
-    { match: /develop|software|\bweb\b|front|back/, icon: 'code', tone: 'blue' },
-    { match: /product/, icon: 'cube', tone: 'amber' },
-    { match: /design|\bux\b|\bui\b|creative/, icon: 'palette', tone: 'pink' },
-    { match: /engineer/, icon: 'gear', tone: 'sky' },
-    { match: /\bhr\b|human|people|recruit/, icon: 'people', tone: 'orange' },
-    { match: /analytic|data/, icon: 'bars', tone: 'violet' },
-    { match: /market|sales|growth/, icon: 'briefcase', tone: 'teal' },
-    { match: /operation/, icon: 'gear', tone: 'slate' },
-    { match: /quality|\bqa\b|test/, icon: 'check', tone: 'green' }
+    { match: /develop|software|\bweb\b|front|back/, icon: 'code', tone: 'blue', code: 'SWE', tags:['Frontend','Backend']},
+    { match: /product/, icon: 'cube', tone: 'amber', code: 'PROD', tags:['Strategy','Roadmap','Planning']},
+    { match: /design|\bux\b|\bui\b|creative/, icon: 'palette', tone: 'pink', code: 'DSN', tags:['UI/UX','Visuals']},
+    { match: /engineer/, icon: 'gear', tone: 'sky', code: 'ENG', tags:['Core API','Security','DevOps'] },
+    { match: /\bhr\b|human|people|recruit/, icon: 'people', tone: 'orange', code: 'PEO', tags:['Recruitment','Onboarding'] },
+    { match: /analytic|data/, icon: 'bars', tone: 'violet', code:'DATA', tags:['Analytics','BI','Data Science'] },
+    { match: /market|sales|growth/, icon: 'briefcase', tone: 'teal', code: 'MKT', tags:['Sales','Growth'] },
+    { match: /operation/, icon: 'gear', tone: 'slate', code: 'OPS', tags:['Logistics','Administration']},
+    { match: /quality|\bqa\b|test/, icon: 'check', tone: 'green', code:'QA', tags:['Testing','Automation']}
 ];
 
 function getDepartmentStyle(department) {
     const name = String(department || '').toLowerCase();
     const found = departmentStyles.find(item => item.match.test(name));
 
-    return found || { icon: 'briefcase', tone: 'blue' };
+    return found || { icon: 'briefcase', tone: 'blue', code: getInitials(department), tags: [] };
 }
 
 function svgMarkup(shapes, extra = '') {
@@ -245,6 +286,21 @@ function makeDepartmentCard(department, members, totalHeadcount = members.length
     const name = document.createElement('span');
     name.className = 'department-name';
     name.textContent = department;
+
+    const abbr = document.createElement('span');
+    abbr.className = 'department-code';
+    abbr.textContent = style.code;
+    abbr.setAttribute('aria-label', `Department code: ${style.code}`);
+
+    const tags = document.createElement('span');
+    tags.className = 'department-tags';
+    for (const label of style.tags) {
+        const tag = document.createElement('span');
+        tag.className = 'department-tag';
+        tag.textContent = label;
+        tags.appendChild(tag);
+    }
+    tags.hidden = !style.tags.length;
 
     const total = document.createElement('span');
     total.className = 'department-count';
@@ -303,7 +359,7 @@ function makeDepartmentCard(department, members, totalHeadcount = members.length
     footer.className = 'department-footer';
     footer.append(faces, arrow);
 
-    card.append(icon, name, total, share, bar, footer);
+    card.append(icon, name, abbr, total, share, bar, tags, footer);
 
     card.addEventListener('click', () => {
         selectDepartment(key);
@@ -351,10 +407,44 @@ function renderDepartments() {
         return;
     }
 
+    const searchQuery = normalizeText(
+        teamSearchInput?.value || ''
+    );
+
+    const selectedDivision =
+        divisionFilter?.value || 'all';
+
+    filteredDepartmentEmployees =
+        employees.filter(employee => {
+            const searchableText = normalizeText([
+                employee.name,
+                employee.title,
+                employee.department,
+                employee.division,
+                employee.team,
+                employee.squad,
+                employee.leader
+            ].join(' '));
+
+            const matchesSearch =
+                searchableText.includes(searchQuery);
+
+            const matchesDivision =
+                selectedDivision === 'all' ||
+                normalizeText(employee.division) ===
+                    selectedDivision;
+
+            return (
+                matchesSearch &&
+                matchesDivision
+            );
+        });
+
     const groups = new Map();
 
-    employees.forEach(employee => {
-        const department = String(employee.department || '').trim();
+    filteredDepartmentEmployees.forEach(employee => {
+        const department =
+            String(employee.department || '').trim();
 
         if (!department) {
             return;
@@ -363,37 +453,57 @@ function renderDepartments() {
         const key = department.toLowerCase();
 
         if (!groups.has(key)) {
-            groups.set(key, { name: department, members: [] });
+            groups.set(key, {
+                name: department,
+                members: []
+            });
         }
 
         groups.get(key).members.push(employee);
     });
 
-    const totalHeadcount = [...groups.values()]
-        .reduce((sum, group) => sum + group.members.length, 0);
+    const totalHeadcount =
+        filteredDepartmentEmployees.length;
 
     const cards = [...groups.values()]
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .map(group => makeDepartmentTile(
-            makeDepartmentCard(group.name, group.members, totalHeadcount),
-            group.name
-        ));
+        .sort((a, b) =>
+            a.name.localeCompare(b.name)
+        )
+        .map(group =>
+            makeDepartmentTile(
+                makeDepartmentCard(
+                    group.name,
+                    group.members,
+                    totalHeadcount
+                ),
+                group.name
+            )
+        );
 
     departmentGrid.replaceChildren(...cards);
 
-    if (activeDepartment && !groups.has(activeDepartment)) {
-        activeDepartment = null;
+    if (teamResultsCount) {
+        teamResultsCount.textContent =
+            `${cards.length} result${
+                cards.length === 1 ? '' : 's'
+            }`;
     }
 
-    if (!cards.length) {
-        const message = document.createElement('p');
-        message.className = 'empty-state';
-        message.textContent = 'No departments to show yet.';
-        departmentGrid.appendChild(message);
+    if (teamEmptyState) {
+        teamEmptyState.hidden =
+            cards.length !== 0;
+    }
+
+    if (
+        activeDepartment &&
+        !groups.has(activeDepartment)
+    ) {
+        activeDepartment = null;
     }
 
     syncDepartmentCards();
     renderDepartmentMembers();
+    document.dispatchEvent(new CustomEvent('departments-rendered', { detail: { employees } }));
 }
 
 function syncDepartmentCards() {
@@ -420,7 +530,7 @@ function renderDepartmentMembers() {
     departmentMembers.replaceChildren();
 
     const members = activeDepartment
-        ? employees
+        ? filteredDepartmentEmployees
             .filter(employee =>
                 String(employee.department || '')
                     .trim()
@@ -1017,7 +1127,9 @@ function openProfile(employee) {
     name.textContent = employee.name;
     const title = document.createElement('p');
     title.textContent = employee.title || 'Role not listed';
-    identity.append(name, title, makeDepartmentBadge(employee));
+    const share = document.createElement('p');
+    share.textContent = 'share profile';
+    identity.append(name, title, makeDepartmentBadge(employee), share);
     header.append(makeAvatar(employee, 'profile-avatar'), identity);
 
     // Jacquese's expanded 2-by-2 layout belongs in the profile, not on each compact card.
@@ -1145,7 +1257,7 @@ function openProfile(employee) {
 
 function renderEmployees() {
     const query =
-        searchInput.value.trim().toLowerCase();
+        searchInput.value.trim().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
     const selectedDepartment =
         departmentFilter.value;
@@ -1154,17 +1266,17 @@ function renderEmployees() {
         sortFilter.value;
 
     const matchingEmployees = employees.filter(employee => {
-        const matchesSearch = [
+        const searchableText = [
             employee.name,
             employee.title,
             employee.department,
             employee.email,
+            employee.location,
+            employee.region,
+            employee.country,
             ...(Array.isArray(employee.skills) ? employee.skills : [])
-        ].some(value =>
-            String(value || '')
-                .toLowerCase()
-                .includes(query)
-        );
+        ].map(value => String(value || '')).join(' ').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        const matchesSearch = query.split(/\s+/).every(term => searchableText.includes(term));
 
         const matchesDepartment =
             selectedDepartment === 'all' ||
@@ -1265,8 +1377,16 @@ async function loadEmployees() {
         const data = await window.EmployeeStore.list();
         if (request !== directoryRequest) return;
         if (!Array.isArray(data)) throw new Error('Invalid directory response');
-        employees = data;
+    
+    employees = data.map(employee => ({
+    ...employee,
+    division: employee.division || 'TBD',
+    team: employee.team || 'TBD',
+    squad: employee.squad || 'TBD',
+    leader: employee.leader || 'TBD'
+}));
         updateStatistics();
+        populateDivisionFilter();
         renderDepartments();
         const selected = departmentFilter.value;
         departmentFilter.replaceChildren();
@@ -1373,7 +1493,8 @@ if (menuButton && navigation) {
     );
 
     function updateActiveLink() {
-        const requested = window.location.hash.slice(1);
+        const hash = window.location.hash.slice(1);
+        const requested = hash === 'Groups' ? 'Departments' : hash;
         const page = ['directory', 'Departments', 'About', 'Contact'].includes(requested)
             ? requested : 'directory';
         const current = '#' + page;
@@ -1381,7 +1502,11 @@ if (menuButton && navigation) {
         document.querySelectorAll('[data-page]').forEach(section => {
             section.hidden = section.dataset.page !== page;
         });
-        const titles = { directory: 'Employee Directory', Departments: 'Departments', About: 'About Our Team', Contact: 'Contact Us' };
+        const titles = { 
+            directory: 'Employee Directory', 
+            Departments: 'Departments',
+            About: 'About Our Team', 
+            Contact: 'Contact Us' };
         document.title = 'The People | ' + titles[page];
 
         navigation.querySelectorAll('a')
@@ -1463,3 +1588,58 @@ window.addEventListener('keydown', event => {
     if (searchInput.closest('[hidden]')) return;
     event.preventDefault(); searchInput.focus();
 });
+
+function populateDivisionFilter() {
+    const divisions = [
+        ...new Set(
+            employees
+                .map(employee =>
+                    String(employee.division || '').trim()
+                )
+                .filter(Boolean)
+        )
+    ].sort((a, b) =>
+        a.localeCompare(b)
+    );
+
+    divisionFilter.replaceChildren();
+
+    const allOption =
+        document.createElement('option');
+
+    allOption.value = 'all';
+    allOption.textContent = 'All Divisions';
+
+    divisionFilter.appendChild(allOption);
+
+    divisions.forEach(division => {
+        const option =
+            document.createElement('option');
+
+        option.value = normalizeText(division);
+        option.textContent = division;
+
+        divisionFilter.appendChild(option);
+    });
+}
+
+teamSearchInput.addEventListener(
+    'input',
+    renderDepartments
+);
+
+divisionFilter.addEventListener(
+    'change',
+    renderDepartments
+);
+
+clearAllTeams.addEventListener(
+    'click',
+    () => {
+        teamSearchInput.value = '';
+        divisionFilter.value = 'all';
+
+        renderDepartments();
+    }
+);
+

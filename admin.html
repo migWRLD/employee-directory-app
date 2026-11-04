@@ -7,14 +7,14 @@
   <title>Add Teammate | The People</title>
   <link rel="icon" type="image/png" href="the-people-logo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="admin.css?v=aether-flow-5">
+  <link rel="stylesheet" href="admin.css?v=shared-intern-1">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
 <link rel="stylesheet" href="location-picker.css?v=world-location-17">
-  <link rel="stylesheet" href="apple-spotlight.css?v=spotlight-6">
+  <link rel="stylesheet" href="apple-spotlight.css?v=spotlight-9">
 </head>
 <body class="admin-page">
   <a class="skip-link" href="#page-content">Skip to main content</a>
-    <section class="people-hero" aria-labelledby="people-hero-title">
+    <section class="people-hero" hidden aria-labelledby="people-hero-title">
       <canvas id="people-particles" aria-hidden="true"></canvas>
       <div class="people-hero-content">
         <p class="people-hero-eyebrow">THE PEOPLE · BETTER TOGETHER</p>
@@ -26,7 +26,7 @@
             <div class="spotlight-panel">
               <div class="spotlight-input-row">
                 <svg class="spotlight-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.8"/><path d="m16.5 16.5 4.5 4.5"/></svg>
-                <div class="spotlight-input-wrap"><label class="visually-hidden" for="spotlight-search">Search the People Directory by name, skill, role, or location</label><span class="spotlight-placeholder" aria-hidden="true">Search people</span><input id="spotlight-search" type="search" autocomplete="off" maxlength="200" aria-controls="spotlight-results" aria-expanded="false"></div>
+                <div class="spotlight-input-wrap"><label class="visually-hidden" for="spotlight-search">Search the People Directory by name, skill, role, or location</label><span class="spotlight-placeholder" aria-hidden="true">Search by name</span><input id="spotlight-search" type="search" autocomplete="off" maxlength="200" aria-controls="spotlight-results" aria-expanded="false"></div>
                 <button id="spotlight-voice" class="spotlight-voice" type="button" aria-label="Search by voice" aria-pressed="false" aria-describedby="spotlight-voice-status" title="Search by voice">
                   <svg class="voice-waveform" viewBox="0 0 32 28" aria-hidden="true"><defs><linearGradient id="voice-wave-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset=".5" stop-color="#7c5cff"/><stop offset="1" stop-color="#7c5cff"/></linearGradient></defs><g fill="url(#voice-wave-gradient)"><rect x="2" y="10" width="3" height="8" rx="1.5"/><rect x="8" y="6" width="3" height="16" rx="1.5"/><rect x="14" y="2" width="3" height="24" rx="1.5"/><rect x="20" y="7" width="3" height="14" rx="1.5"/><rect x="26" y="11" width="3" height="6" rx="1.5"/></g></svg>
                 </button>
@@ -51,10 +51,25 @@
     <div id="teammate-workspace" tabindex="-1">
     <div class="breadcrumb"><a href="index.html#directory">Directory</a><span aria-hidden="true">/</span><span>Add Teammate</span></div>
     <div class="admin-intro"><div><p class="admin-eyebrow">THE PEOPLE · TEAM MANAGEMENT</p><h2>Add New Teammate</h2><p>Introduce someone new to the team. Build their profile and preview it as you go.</p></div><a class="back-link" href="index.html#directory">← Back to directory</a></div>
+    <section id="hero-owner-controls" class="admin-panel" hidden aria-labelledby="hero-owner-title">
+      <h2 id="hero-owner-title">Final reveal</h2>
+      <p>Only your owner account can change the search hero's public visibility.</p>
+      <button id="hero-visibility-toggle" type="button" role="switch" aria-checked="false" disabled>Show search hero</button>
+      <p id="hero-visibility-status" role="status" aria-live="polite"></p>
+      <h3>Shared intern login</h3>
+      <p>Create or reset THE-PEOPLE for the interns. It can manage teammates but cannot use your owner reveal switch. Reset changes only the shared intern password, not your owner password.</p>
+      <form id="shared-intern-form">
+        <label for="shared-intern-password">Set the shared intern password</label>
+        <input id="shared-intern-password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+        <button id="shared-intern-create" type="submit">Create THE-PEOPLE login</button>
+        <button id="shared-intern-reset" type="submit">Reset THE-PEOPLE password</button>
+      </form>
+      <p id="shared-intern-status" role="status" aria-live="polite"></p>
+    </section>
     <p id="admin-status" class="admin-status" role="status" aria-live="polite">Connecting…</p>
     <section id="login-panel" class="admin-panel login-panel" hidden aria-labelledby="login-title">
       <div class="section-icon" aria-hidden="true">↗</div><h2 id="login-title">Admin login</h2><p>Sign in with your approved admin account to add or manage teammates.</p>
-      <form id="login-form"><label for="login-email">Email</label><input id="login-email" type="email" autocomplete="username" required maxlength="254"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" required><button class="admin-primary" type="submit" id="sign-in">Sign in</button></form>
+      <form id="login-form"><label for="login-email">Email or username</label><input id="login-email" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="254" placeholder="Your email or THE-PEOPLE"><label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" required><button class="admin-primary" type="submit" id="sign-in">Sign in</button></form>
     </section>
     <div id="session-bar" class="session-bar" hidden><span><span class="session-dot" aria-hidden="true"></span><span id="signed-in-as"></span></span><button id="sign-out" type="button">Sign out</button></div>
     <section id="manager-panel" aria-label="Manage employees" hidden>
@@ -183,7 +198,7 @@
         if (frame !== null) cancelAnimationFrame(frame);
         frame = null;
         previousTime = null;
-        if (!paused && !document.hidden && visible) frame = requestAnimationFrame(animate);
+        if (!paused && !document.hidden && visible && !hero.hidden) frame = requestAnimationFrame(animate);
         else draw();
         updateToggle();
     }
@@ -217,6 +232,7 @@
     toggle.addEventListener('click', () => { paused = !paused; syncAnimation(); });
     motion.addEventListener('change', () => { paused = motion.matches; syncAnimation(); });
     document.addEventListener('visibilitychange', syncAnimation);
+    hero.addEventListener('hero-visibility-change', () => { resize(); syncAnimation(); });
     if ('ResizeObserver' in window) new ResizeObserver(resize).observe(hero);
     else window.addEventListener('resize', resize);
     if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
@@ -227,8 +243,10 @@
     syncAnimation();
 })();
   </script>
-  <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js?v=world-location-17"></script><script src="location-picker.js?v=world-location-17"></script><script src="admin.js?v=world-location-17"></script>
-  <script src="apple-spotlight.js?v=spotlight-6"></script>
-  <script src="admin-hero-motion.js?v=prism-typing-morph-3"></script>
+  <script src="supabase-2.118.0.js"></script><script src="supabase-config.js"></script><script src="employee-store.js?v=shared-intern-reset-2"></script><script src="location-picker.js?v=world-location-17"></script><script src="admin.js?v=shared-intern-1"></script>
+  <script src="apple-spotlight.js?v=hero-owner-1"></script>
+  <script src="admin-hero-motion.js?v=hero-owner-1"></script>
+  <script src="hero-visibility.js?v=1"></script>
+  <script src="shared-intern-setup.js?v=2"></script>
 </body>
 </html>

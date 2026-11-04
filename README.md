@@ -52,6 +52,22 @@ Country choices cover 249 ISO countries/territories. City suggestions are a cura
 
 Saved profiles are shared through Supabase. Other visitors see updates when they load or refresh the directory. Drafts, bookmarks, view preferences, and theme preferences stay in the current browser.
 
+### Departments summary and openings
+
+The Departments page shows live department and employee totals, a separate Grid/List preference, header people search, Quick Invite (the existing approved-admin Add Teammate flow), and department openings details. The department toolbar and card contents remain independent of these additions.
+
+Open roles are maintained in `department-openings.json`, keyed by department name (case insensitive). An absent department means its openings are **not provided**, while an empty array means **no open roles listed**. The file starts empty; it does not contain the reference screenshot's sample vacancies. To add actual approved roles, use this structure:
+
+```json
+{
+  "your department name": [
+    { "title": "Your approved role title", "location": "Your role location" }
+  ]
+}
+```
+
+The overall openings total is marked incomplete when some departments have no openings data. Updating this file requires a normal reviewed code change; it is not part of the employee Admin form. Guild membership requests and proposals continue to use their existing browser-local behavior.
+
 ## Technology
 
 - HTML, CSS, and vanilla JavaScript.
@@ -101,7 +117,6 @@ The public directory needs access to the configured Supabase project. Local chan
 | `employee-directory.sql` | Database setup, constraints, access policies, and storage configuration. |
 | `add-employee-location.sql`, `employee-worldwide-location.sql` | Records of the applied location-related database changes. |
 | `admin.test.cjs`, `departments.test.cjs` | Existing admin and department tests. |
-| `script.js` | Legacy code retained because the department tests and check command still reference it. The public page loads `directory.js`. |
 | `docs/CHANGELOG.md` | Earlier development notes. |
 
 The duplicate project-copy folder and identified unused assets have been removed. Earlier versions remain in Git history.
@@ -140,7 +155,7 @@ npm run check
 npm test
 ```
 
-**Current coverage limitation:** the department tests execute legacy `script.js`, while the deployed page uses `directory.js`. The syntax-check command also covers only its listed files. Passing these commands does not verify every current feature; update their targets before relying on them for release readiness.
+The department and profile tests execute the active `directory.js`. The syntax-check command checks `directory.js`, `employee-store.js`, and `admin.js`. Automated tests do not replace browser checks for visual layout and real backend interactions.
 
 Before merging, also review the current Directory search/filter combinations, profile links, empty states, navigation, phone layout, keyboard interactions, themes, clocks, and admin form behavior. Use an isolated backend for disposable test records.
 
@@ -161,3 +176,4 @@ Avoid committing passwords, local environment files, editor metadata, or another
 The detailed Week 6 Departments & Teams design remains an implementation target. Its expanded team search, division filter, Create Team flow, openings details, guild proposals/membership, and Quick Invite are not all implemented in the current page. Treat task images and planning notes as design references, not a list of completed features.
 
 GitHub Pages deployment success confirms publishing completed; it does not replace functional or visual testing.
+

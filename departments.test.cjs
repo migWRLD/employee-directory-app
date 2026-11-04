@@ -196,10 +196,10 @@ test('D2: each card shows its share of department headcount with a bar', async (
   try {
     const eng = w.document.querySelector('[data-department="engineering"]');
     const mkt = w.document.querySelector('[data-department="marketing"]');
-    assert.equal(eng.querySelector('.department-share').textContent, '75.0% of headcount');
-    assert.equal(mkt.querySelector('.department-share').textContent, '25.0% of headcount');
-    assert.equal(eng.querySelector('.department-bar-fill').style.width, '75%');
-    assert.match(eng.getAttribute('aria-label'), /3 employees, 75\.0% of headcount/);
+    assert.equal(eng.querySelector('.department-share').textContent, '60.0% of headcount');
+    assert.equal(mkt.querySelector('.department-share').textContent, '20.0% of headcount');
+    assert.equal(eng.querySelector('.department-bar-fill').style.width, '60%');
+    assert.match(eng.getAttribute('aria-label'), /3 employees, 60\.0% of headcount/);
   } finally { w.close(); }
 });
 
@@ -225,5 +225,49 @@ test('D3: the link is not nested inside the card button', async () => {
   try {
     const link = w.document.querySelector('.department-directory-link');
     assert.equal(link.closest('button'), null);
+  } finally { w.close(); }
+});
+
+test('Groups lives at the end of Departments and old group links open that page', async () => {
+  const w = await setup();
+  try {
+    const d = w.document, groups = d.getElementById('Groups'), departments = d.getElementById('Departments');
+    assert.equal(groups.parentElement, departments);
+    assert.equal(departments.lastElementChild, groups);
+    assert.equal(d.querySelector('#primary-navigation a[href="#Groups"]'), null);
+    assert.equal(departments.hidden, true);
+    w.location.hash = '#Departments';
+    w.dispatchEvent(new w.HashChangeEvent('hashchange'));
+    assert.equal(departments.hidden, false);
+    assert.equal(groups.hidden, false);
+    w.location.hash = '#Groups';
+    w.dispatchEvent(new w.HashChangeEvent('hashchange'));
+    assert.equal(departments.hidden, false);
+    assert.equal(d.querySelector('#primary-navigation a[href="#Departments"]').getAttribute('aria-current'), 'location');
+    w.location.hash = '#directory';
+    w.dispatchEvent(new w.HashChangeEvent('hashchange'));
+    assert.equal(departments.hidden, true);
+  } finally { w.close(); }
+});
+
+test('Vera department codes and focus tags appear in the active directory cards', async () => {
+  const w = await setup();
+  try {
+    const d = w.document, engineering = d.querySelector('[data-department="engineering"]');
+    assert.equal(engineering.querySelector('.department-code').textContent, 'ENG');
+    assert.deepEqual([...engineering.querySelectorAll('.department-tag')].map(tag => tag.textContent), ['Core API', 'Security', 'DevOps']);
+    assert.equal(d.querySelector('[data-department="marketing"] .department-code').textContent, 'MKT');
+    assert.match(engineering.querySelector('.department-share').textContent, /60.0%/);
+    engineering.click();
+    assert.equal(d.getElementById('department-members').hidden, false);
+  } finally { w.close(); }
+});
+test('unknown departments get a safe code and no invented tags', async () => {
+  const w = await setup([{id:'test', name:'Example Person', department:'Research Lab', title:'Researcher', email:'example@example.com'}]);
+  try {
+    const card = w.document.querySelector('.department-card');
+    assert.equal(card.querySelector('.department-code').textContent, 'RL');
+    assert.equal(card.querySelectorAll('.department-tag').length, 0);
+    assert.equal(card.querySelector('.department-tags').hidden, true);
   } finally { w.close(); }
 });

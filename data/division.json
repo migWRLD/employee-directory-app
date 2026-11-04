@@ -1,0 +1,48 @@
+[
+  {"id":"product",
+    "name":"Product & Experience",
+    "code":"PX",
+    "tags":["Design Systems",
+            "Mobile Platform"
+        ]
+    
+  },
+  {"id":"engineering",
+    "name": "Engineering & Infra",
+    "code": "ENG",
+    "tags":["Core API",
+            "Security",
+            "DevOps"
+        ]
+  },
+  {"id":"marketREV",
+    "name":"Go-To-Market & Rev",
+    "code":"GTM",
+    "tags":["Sales",
+            "Customer Success"
+            ]
+  },
+  {"id":"machineLearning",
+    "name":"Data & Machine Learning",
+    "code":"DATA",
+    "tags":["Data Platform",
+            "Analytics"
+            ]
+  },
+  {"id":"marketing",
+    "name":"Marketing & Brand",
+    "code":"MKT",
+    "tags":["Content",
+            "Growth"
+          ],
+    "department":"marketing"
+  },
+  {"id":"operations",
+    "name":"People & Operations",
+    "code":"PEO",
+    " tags":["HR Ops",
+              "Workplace"
+            ],
+    "department" : "people"
+  }
+]

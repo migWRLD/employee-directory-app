@@ -47,13 +47,35 @@
         async list() {
             return check(await client.from('employees').select(columns).order('name')).map(mapEmployee);
         },
+        async getHeroVisibility() {
+            return check(await client.from('directory_site_features').select('enabled').eq('key', 'search_hero').single()).enabled;
+        },
+        async isSiteOwner() {
+            const { data, error } = await client.auth.getUser();
+            if (error || !data.user) return false;
+            const rows = check(await client.from('directory_site_owners').select('user_id').eq('user_id', data.user.id));
+            return rows.length === 1;
+        },
+        async setHeroVisibility(enabled) {
+            return check(await client.from('directory_site_features').update({ enabled: Boolean(enabled) }).eq('key', 'search_hero').select('enabled').single()).enabled;
+        },
+        async createSharedInternLogin(password, action = 'create') {
+            const result = await client.functions.invoke('provision-shared-intern', { body: { password, action } });
+            const data = check(result);
+            if (!data?.created && !data?.reset) throw new Error(data?.error || 'Shared account setup failed.');
+            return data;
+        },
         async getAdmin() {
             const { data, error } = await client.auth.getUser();
             if (error || !data.user) return null;
             const rows = check(await client.from('directory_admins').select('user_id').eq('user_id', data.user.id));
             return rows.length ? data.user : null;
         },
-        async signIn(email, password) { return check(await client.auth.signInWithPassword({ email, password })); },
+        async signIn(identifier, password) {
+            const login = String(identifier || '').trim();
+            const email = login.toUpperCase() === 'THE-PEOPLE' ? 'interns.thepeople@example.com' : login;
+            return check(await client.auth.signInWithPassword({ email, password }));
+        },
         async signOut() { return check(await client.auth.signOut()); },
         onAuthChange(callback) {
             return client.auth.onAuthStateChange(() => { setTimeout(callback, 0); });

@@ -12,6 +12,7 @@ function setup(list = async () => people) {
         runScripts: 'outside-only', url: 'https://example.com/admin.html'
     });
     const w = dom.window;
+    if (w.document.querySelector('.people-hero')) w.document.querySelector('.people-hero').hidden = false;
     w.matchMedia = () => ({ matches: true, addEventListener() {} });
     w.EmployeeStore = { list };
     w.HTMLElement.prototype.scrollIntoView = function () {};
@@ -85,6 +86,7 @@ test('default appearance is small, long width and lightly glassy at 0 percent', 
 async function directory(url) {
     const dom = new JSDOM(fs.readFileSync('index.html', 'utf8'), { runScripts: 'outside-only', url, pretendToBeVisual: true });
     const w = dom.window;
+    if (w.document.querySelector('.people-hero')) w.document.querySelector('.people-hero').hidden = false;
     w.matchMedia = () => ({ matches: true, addEventListener() {} });
     w.EmployeeStore = { list: async () => people };
     w.HTMLElement.prototype.scrollIntoView = function () {};
@@ -172,28 +174,90 @@ test('reduced-motion hero keeps complete accessible copy and does not start anim
     } finally { w.close(); }
 });
 
-test('random search prompts stay together and pause while a person types', async () => {
+test('prompts rotate once in order with equal timing and swap only while faded', async () => {
     const dom = new JSDOM(fs.readFileSync('admin.html', 'utf8'), { runScripts: 'outside-only', url: 'https://example.com/admin.html', pretendToBeVisual: true });
     const w = dom.window;
+    if (w.document.querySelector('.people-hero')) w.document.querySelector('.people-hero').hidden = false;
     try {
         const scheduled = new Map(); let id = 0;
         w.matchMedia = () => ({ matches: false, addEventListener() {} });
-        w.setTimeout = callback => { scheduled.set(++id, callback); return id; };
+        w.setTimeout = (callback, delay) => { scheduled.set(++id, { callback, delay }); return id; };
         w.clearTimeout = timer => scheduled.delete(timer);
+        const advance = delay => {
+            assert.equal(scheduled.size, 1, 'exactly one timer owns the transition');
+            const [timer, task] = scheduled.entries().next().value;
+            assert.equal(task.delay, delay);
+            scheduled.delete(timer); task.callback();
+        };
         w.EmployeeStore = { list: async () => people };
         w.eval(fs.readFileSync('apple-spotlight.js', 'utf8'));
         const d = w.document, prompt = d.querySelector('.spotlight-placeholder');
-        const initial = prompt.textContent;
-        const [timer, rotate] = scheduled.entries().next().value;
-        scheduled.delete(timer); rotate();
-        assert.notEqual(prompt.textContent, initial);
-        assert.match(prompt.textContent, /^Search (people|departments|positions|skills|countries|cities|email)$/);
+        assert.equal(prompt.textContent, 'Search by name');
+        for (const next of ['role', 'skill', 'department', 'location', 'name']) {
+            const previous = prompt.textContent;
+            advance(4400);
+            assert.equal(prompt.textContent, previous, 'keep old words during fade-out');
+            assert.equal(prompt.classList.contains('is-prompt-fading'), true);
+            advance(200);
+            assert.equal(prompt.textContent, 'Search by ' + next);
+            assert.equal(prompt.classList.contains('is-prompt-fading'), false);
+            advance(200);
+            assert.equal(prompt.classList.contains('is-prompt-shining'), true);
+        }
+        // Typing mid-transition cancels the pending swap as well as the hold timer.
+        advance(4400);
         const input = search(w, 'Canada'); await tick();
         assert.equal(prompt.hidden, true);
         assert.equal(input.value, 'Canada');
         assert.equal(scheduled.size, 0);
+        assert.equal(prompt.classList.contains('is-prompt-fading'), false);
         input.dispatchEvent(new w.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         assert.equal(prompt.hidden, false);
         assert.equal(scheduled.size, 1);
+        w.dispatchEvent(new w.Event('pagehide'));
+        assert.equal(scheduled.size, 0);
+    } finally { w.close(); }
+});
+
+test('skill suggestions use directory data and searching then resetting restores shortcuts', async () => {
+    const w = setup();
+    try {
+        const d = w.document;
+        const browse = [...d.querySelectorAll('.spotlight-suggestions button')].find(button => button.textContent === 'Browse skills');
+        browse.click();
+        assert.match(d.getElementById('spotlight-skills').textContent, /Loading/);
+        await tick();
+        const skills = [...d.querySelectorAll('#spotlight-skills button')];
+        assert.deepEqual(skills.map(button => button.textContent).sort(), ['CSS', 'Figma', 'JavaScript']);
+        skills.find(button => button.textContent === 'Figma').click();
+        assert.equal(d.getElementById('spotlight-search').value, 'Figma');
+        assert.match(d.querySelector('.spotlight-result').textContent, /Alex Sample/);
+        assert.equal(d.querySelector('.spotlight-suggestions').hidden, true);
+        assert.equal(browse.getAttribute('aria-expanded'), 'false');
+        search(w, 'no-such-person');
+        d.querySelector('.spotlight-reset').click();
+        assert.equal(d.getElementById('spotlight-search').value, '');
+        assert.equal(d.querySelector('.spotlight-suggestions').hidden, false);
+        assert.equal(d.activeElement, d.getElementById('spotlight-search'));
+        assert.equal(d.getElementById('spotlight-results').hidden, true);
+    } finally { w.close(); }
+});
+
+test('result photos fall back to initials and reject unsafe image URLs', async () => {
+    const w = setup(async () => [
+        { ...people[0], image: 'https://example.com/photo.jpg' },
+        { ...people[1], image: 'javascript:alert(1)' }
+    ]);
+    try {
+        const d = w.document;
+        search(w, 'example.com'); await tick();
+        const avatars = d.querySelectorAll('.spotlight-avatar');
+        assert.equal(avatars.length, 2);
+        assert.equal(avatars[0].textContent, 'ZE');
+        assert.equal(avatars[1].querySelector('img'), null);
+        const image = avatars[0].querySelector('img');
+        image.dispatchEvent(new w.Event('error'));
+        assert.equal(avatars[0].querySelector('img'), null);
+        assert.equal(avatars[0].textContent, 'ZE');
     } finally { w.close(); }
 });
