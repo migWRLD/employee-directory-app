@@ -1,0 +1,11 @@
+/* Integration styles keep the existing Directory and the interns' feature styles. */
+.directory-header-tools{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.directory-header-tools .header-search{flex:1;min-width:120px;max-width:240px}
+#header-search-input{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit}
+.header-quick-invite{padding:9px 12px;border-radius:10px;font-size:13px;min-height:44px;display:inline-flex;align-items:center}
+.profile-actions{flex-wrap:wrap}
+.profile-message-button{padding:10px 16px;border:1px solid var(--line);border-radius:8px;background:var(--primary);color:var(--panel);font:inherit;cursor:pointer;margin-bottom:20px}
+body.login-page .login-container{width:min(440px,calc(100% - 32px));margin:10vh auto;padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:16px}
+.login-container h1{font-size:28px}.login-container p{margin:12px 0}.login-container label{display:block;margin:16px 0 6px}.login-container input{width:100%;padding:12px;min-height:44px;border:1px solid var(--line);border-radius:8px;font:inherit}.login-container button{margin-top:20px;padding:10px 20px;min-height:44px;background:var(--primary);color:var(--panel);border:0;border-radius:8px;font:inherit}
+@media(max-width:1150px){.directory-header-tools{order:3;flex-basis:100%}.directory-header-tools .header-search{max-width:none}.header-container{flex-wrap:wrap}}
+@media print{body:has(.profile-modal)>*:not(.profile-modal){display:none!important}.profile-modal{position:static!important;display:block!important;background:none!important;padding:0!important;overflow:visible!important}.profile-modal-content.full-profile{max-width:none!important;width:100%!important;max-height:none!important;overflow:visible!important;box-shadow:none!important;border:0!important;padding:0!important}.profile-modal .modal-close,.profile-modal .profile-actions,.profile-modal .profile-message-button,.profile-modal .copy-email-icon{display:none!important}body{overflow:visible!important}.full-profile-section{break-inside:avoid}}

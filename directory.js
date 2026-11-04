@@ -1,4 +1,5 @@
 const searchInput = document.querySelector('#search');
+const headerSearchInput = document.querySelector('#header-search-input');
 const departmentFilter = document.querySelector('#department-filter');
 
 const teamSearchInput =
@@ -1114,6 +1115,42 @@ function openProfile(employee) {
     modal.setAttribute('aria-labelledby', 'employee-profile-name');
     const content = document.createElement('div');
     content.className = 'profile-modal-content full-profile';
+    // Profile Sections
+    const profileActions = document.createElement('div');
+    profileActions.className = 'profile-actions';
+
+    const shareButton = document.createElement('button');
+    shareButton.type = 'button';
+    shareButton.className = 'share-profile-button';
+    shareButton.textContent = 'Share Profile';
+
+    const printButton = document.createElement('button');
+    printButton.type = 'button';
+    printButton.className = 'print-profile-button';
+    printButton.textContent = 'Print Profile';
+
+    shareButton.addEventListener('click', async () => {
+        const profileUrl = new URL(window.location.href);
+        profileUrl.searchParams.set('employee', employee.id);
+
+        try {
+            await navigator.clipboard.writeText(profileUrl.href);
+            shareButton.textContent = 'Link Copied!';
+            setTimeout(() => {
+                shareButton.textContent = 'Share Profile';
+            }, 2000);
+
+        } catch (error) {
+            console.error('Failed to copy profile link:', error);
+            shareButton.textContent = 'Copy Failed';
+        }
+    });
+
+    printButton.addEventListener('click', () => {
+        window.print();
+    });
+
+
     const closeButton = document.createElement('button');
     closeButton.className = 'modal-close';
     closeButton.type = 'button';
@@ -1215,7 +1252,34 @@ function openProfile(employee) {
         projectList.append(item);
     }
     projectsSection.append(projectList);
-    content.append(closeButton, header, grid);
+    const messageButton = document.createElement('button');
+
+messageButton.type = 'button';
+messageButton.className = 'profile-message-button';
+messageButton.textContent = 'Send Direct Message';
+
+messageButton.addEventListener('click', () => {
+    if (!employee.chat_user_id) {
+        console.error(
+            'This employee is missing chat_user_id:',
+            employee
+        );
+
+        alert(
+            'This employee is not connected to a chat account yet.'
+        );
+
+        return;
+    }
+
+    window.location.href =
+        `messaging.html?recipient=${encodeURIComponent(
+            employee.chat_user_id
+        )}`;
+});
+
+    profileActions.append(shareButton, printButton);
+    content.append(closeButton, header, profileActions, messageButton, grid);
 
     modal.appendChild(content);
     document.body.appendChild(modal);
@@ -1256,6 +1320,7 @@ function openProfile(employee) {
 }
 
 function renderEmployees() {
+    if (headerSearchInput) headerSearchInput.value = searchInput.value;
     const query =
         searchInput.value.trim().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 
@@ -1343,6 +1408,18 @@ searchInput.addEventListener(
     renderEmployees
 );
 
+if (headerSearchInput) {
+    headerSearchInput.addEventListener('input', () => {
+        searchInput.value = headerSearchInput.value;
+
+        if (window.location.hash !== '#directory') {
+            window.location.hash = '#directory';
+        }
+
+        renderEmployees();
+    });
+}
+
 departmentFilter.addEventListener(
     'change',
     renderEmployees
@@ -1365,6 +1442,21 @@ if (clearButton) {
 // Spotlight links select a profile by its stable directory ID after data loads.
 let requestedProfileId = new URLSearchParams(window.location.search).get('employee');
 let directoryRequest = 0;
+const chatUserIdsByEmail = {
+    'miguel@latech.com':
+        '00cc93be-2610-404a-9a1b-7d50fb413407',
+
+    'kassandra@latech.com':
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+};
+const chatUserIdsByName = {
+    'arias miguel':
+        '00cc93be-2610-404a-9a1b-7d50fb413407',
+
+    'vera kassandra':
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+};
+
 async function loadEmployees() {
     const request = ++directoryRequest;
     const status = document.querySelector('#directory-status');
@@ -1377,13 +1469,21 @@ async function loadEmployees() {
         const data = await window.EmployeeStore.list();
         if (request !== directoryRequest) return;
         if (!Array.isArray(data)) throw new Error('Invalid directory response');
-    
+
     employees = data.map(employee => ({
     ...employee,
     division: employee.division || 'TBD',
     team: employee.team || 'TBD',
     squad: employee.squad || 'TBD',
-    leader: employee.leader || 'TBD'
+    leader: employee.leader || 'TBD',
+    chat_user_id:
+        employee.chat_user_id ||
+        chatUserIdsByEmail[
+            String(employee.email || '').trim().toLowerCase()
+        ] ||
+        chatUserIdsByName[
+            String(employee.name || '').trim().toLowerCase()
+        ]
 }));
         updateStatistics();
         populateDivisionFilter();
@@ -1502,10 +1602,10 @@ if (menuButton && navigation) {
         document.querySelectorAll('[data-page]').forEach(section => {
             section.hidden = section.dataset.page !== page;
         });
-        const titles = { 
-            directory: 'Employee Directory', 
+        const titles = {
+            directory: 'Employee Directory',
             Departments: 'Departments',
-            About: 'About Our Team', 
+            About: 'About Our Team',
             Contact: 'Contact Us' };
         document.title = 'The People | ' + titles[page];
 
