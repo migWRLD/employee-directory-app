@@ -2181,3 +2181,59 @@ body.darkMode .employee-card .skill-badge {
     flex: 1;
   }
 }
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.profile-actions button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.share-profile-button {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.print-profile-button {
+  background-color: var(--soft);
+  color: var(--ink);
+}
+
+.profile-actions button:hover {
+  opacity: 0.85;
+  filter: brightness(0.95);
+}
+
+.print-profile-button {
+  background: var(--primary-soft);
+}
+
+@media (max-width: 480px) {
+  .profile-actions {
+    flex-direction: column;
+  }
+}
+
+.header-quick-invite {
+  background: #004ac6 !important;
+  color: #ffffff !important;
+  border: 1px solid #004ac6 !important;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.header-quick-invite:hover {
+  background: #298cca !important;
+  color: #ffffff !important;
+  border-color: #46597b !important;
+}

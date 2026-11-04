@@ -1,4 +1,5 @@
 const searchInput = document.querySelector('#search');
+const headerSearchInput = document.querySelector('#header-search-input');
 const departmentFilter = document.querySelector('#department-filter');
 const sortFilter = document.querySelector('#sort-filter');
 const clearButton = document.querySelector('#clear-button, #clearSearch');
@@ -945,6 +946,41 @@ function openProfile(employee) {
     const content = document.createElement('div');
     content.className = 'profile-modal-content';
 
+    // Profile Sections 
+    const profileActions = document.createElement('div');
+    profileActions.className = 'profile-actions';
+    
+    const shareButton = document.createElement('button');
+    shareButton.type = 'button';
+    shareButton.className = 'share-profile-button';
+    shareButton.textContent = 'Share Profile';
+
+    const printButton = document.createElement('button');
+    printButton.type = 'button';
+    printButton.className = 'print-profile-button';
+    printButton.textContent = 'Print Profile';
+
+    shareButton.addEventListener('click', async () => {
+        const profileUrl = new URL(window.location.href);
+        profileUrl.searchParams.set('employee', employee.id);
+
+        try {
+            await navigator.clipboard.writeText(profileUrl.href);
+            shareButton.textContent = 'Link Copied!';
+            setTimeout(() => {
+                shareButton.textContent = 'Share Profile';
+            }, 2000);
+
+        } catch (error) {
+            console.error('Failed to copy profile link:', error);
+            shareButton.textContent = 'Copy Failed';
+        }
+    });
+
+    printButton.addEventListener('click', () => {
+        window.print();
+    });
+
     const closeButton = document.createElement('button');
     closeButton.className = 'modal-close';
     closeButton.type = 'button';
@@ -1074,7 +1110,9 @@ function openProfile(employee) {
     if (!projects.length) { const item = document.createElement('li'); item.textContent = 'No projects listed.'; projectList.append(item); }
     sections[3].append(projectList);
     activate(0);
-    content.append(closeButton, header, tabs, panels);
+
+    profileActions.append(shareButton, printButton);
+    content.append(closeButton, header, profileActions, tabs, panels);
 
     modal.appendChild(content);
     document.body.appendChild(modal);
@@ -1114,6 +1152,42 @@ function openProfile(employee) {
     closeButton.focus();
 }
 
+function openSharedProfile() {
+    const params = new URLSearchParams(window.location.search);
+    const employeeId = params.get('employee');
+
+    if (!employeeId) {
+        return;
+    }
+
+    const employee = employees.find(person => String(person.id) === employeeId);
+
+    if (employee) {
+        openProfile(employee);
+    }
+}
+
+// Adding Abbreviations for the Location Names to make it easier to Search and Filter Employees by Location
+const locationAbbreviations = { 
+    uk: ['United Kingdom', 'great britain'],
+    gb: ['United Kingdom', 'great britain'],
+    us: ['United States', 'United States of America', 'usa'],
+    ca: ['Canada'],
+    usa: ['United States of America', 'us'],
+    uae: ['United Arab Emirates'],
+    au: ['Australia'],
+    nz: ['New Zealand'],
+    in: ['India'],
+    de: ['Germany'],
+    fr: ['France'],
+    jp: ['Japan'],
+    za: ['South Africa'],
+    kr: ['South Korea'],
+    tr: ['Turkiye', 'Turkey'],
+};
+
+
+
 function renderEmployees() {
     const query =
         searchInput.value.trim().toLowerCase();
@@ -1130,12 +1204,18 @@ function renderEmployees() {
             employee.title,
             employee.department,
             employee.email,
+            employee.location,
             ...(Array.isArray(employee.skills) ? employee.skills : [])
-        ].some(value =>
-            String(value || '')
+        ].some(value => {
+            const text = String(value || '')
                 .toLowerCase()
-                .includes(query)
-        );
+                .trim();
+
+            if (text.includes(query)) return true;
+            
+            const abbreviations = locationAbbreviations[query] || [];
+            return abbreviations.some(abbr => text.includes(abbr.toLowerCase()));
+        });
 
         const matchesDepartment =
             selectedDepartment === 'all' ||
@@ -1202,10 +1282,23 @@ searchInput.addEventListener(
     renderEmployees
 );
 
+if (headerSearchInput) {
+    headerSearchInput.addEventListener('input', () => {
+        searchInput.value = headerSearchInput.value;
+        
+        if (window.location.hash !== '#directory') {
+            window.location.hash = '#directory';
+        }
+
+        renderEmployees();
+    }); 
+}
+
 departmentFilter.addEventListener(
     'change',
     renderEmployees
 );
+
 
 sortFilter.addEventListener(
     'change',
@@ -1251,6 +1344,9 @@ async function loadEmployees() {
         departmentFilter.value = [...departmentFilter.options].some(o => o.value === selected) ? selected : 'all';
         renderEmployees();
         status.hidden = true;
+
+        // Open a profile if the page was accessed through a shared Link.
+        openSharedProfile();
     } catch {
         if (request !== directoryRequest) return;
         status.textContent = employees.length

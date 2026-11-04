@@ -20,8 +20,22 @@
   <a class="skip-link" href="#directory">Skip to employee directory</a>
   <header class="directory-header" id="Home">
     <div class="header-container">
-      <a class="logo people-logo" href="#directory" aria-label="The People directory"><img src="the-people-logo.png"
-          alt="The People" width="1960" height="816"></a>
+      <a class="logo people-logo" href="#directory" aria-label="The People directory">
+        <img src="the-people-logo.png" alt="The People" width="1960" height="816">
+      </a>
+
+      <div class="header-search">
+        <label for="header-search-input" class="visually-hidden">
+          Search employees
+        </label>
+
+        <input type="search" id="header-search-input" placeholder="Search people...." autoComplete="off">
+      </div>
+      <a class="add-teammate header-quick-invite" href="admin.html">
+        + Quick Invite
+      </a>
+
+
       <button class="menu-toggle" type="button" aria-label="Open navigation menu" aria-controls="primary-navigation"
         aria-expanded="false">☰</button>
       <nav class="nav-links liquid-navigation" id="primary-navigation" aria-label="Main navigation">
@@ -96,7 +110,8 @@
           <h2>Team Members</h2>
           <p class="search-intro">Find colleagues by <span class="kinetic-word">name</span>, <span
               class="kinetic-word">role</span>, <span class="kinetic-word">email</span>, <span
-              class="kinetic-word">department</span>, or <span class="kinetic-word">skill</span>.</p>
+              class="kinetic-word">department</span>, <span class="kinetic-word">location</span>, or <span
+              class="kinetic-word">skill</span>.</p>
         </div>
         <div class="directory-toolbar">
           <div class="view-switch" role="group" aria-label="Directory view">
@@ -114,7 +129,8 @@
           <div class="search-field"><label for="search">Search employees</label>
             <div class="input-wrap"><span class="search-icon material-symbols-outlined"
                 aria-hidden="true">search</span><input id="search" type="search"
-                placeholder="Search name, role, email, or skill…" aria-keyshortcuts="/"><kbd aria-hidden="true">/</kbd>
+                placeholder="Search name, role, email, location, or skill…" aria-keyshortcuts="/"><kbd
+                aria-hidden="true">/</kbd>
             </div>
           </div>
           <div class="filter-field"><label for="department-filter">Department</label><select id="department-filter">
