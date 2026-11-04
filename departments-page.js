@@ -119,6 +119,7 @@
         search.dispatchEvent(new Event('input', { bubbles: true }));
         window.addEventListener('hashchange', () => search.focus({ preventScroll: true }), { once: true });
         window.location.hash = '#directory';
+        syncHeader();
         results.hidden = true;
         input.setAttribute('aria-expanded', 'false');
     }

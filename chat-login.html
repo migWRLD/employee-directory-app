@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Chat Login | The People</title>
+    <link rel="stylesheet" href="directory.css">
+    <link rel="stylesheet" href="directory-chat.css">
+</head>
+
+<body class="login-page">
+    <main class="login-container">
+        <h1>Employee Directory</h1>
+
+        <p>
+            Log in to send a direct message.
+        </p>
+
+        <a href="index.html#directory">← Back to Directory</a>
+        <form id="login-form">
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                id="email"
+                type="email"
+                required
+            >
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                id="password"
+                type="password"
+                required
+            >
+
+            <button type="submit">
+                Log In
+            </button>
+
+            <p
+                id="login-message"
+                aria-live="polite"
+            ></p>
+        </form>
+    </main>
+
+    <script src="supabase-2.118.0.js"></script>
+    <script src="miguel-supabase-config.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
