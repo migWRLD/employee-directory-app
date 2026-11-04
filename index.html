@@ -9,11 +9,12 @@
   <link rel="icon" type="image/png" href="the-people-logo.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap">
-  <link rel="stylesheet" href="directory.css?v=vera-week6-3-full-profile-najeeb-d2d3-city-time-16">
+  <link rel="stylesheet" href="directory.css?v=chat-profile-actions-20">
   <link rel="stylesheet" href="theme-changer.css?v=theme-11">
   <link rel="stylesheet" href="kinetic-nav.css?v=kinetic-sentence-14">
   <link rel="stylesheet" href="liquid-navigation.css?v=liquid-nav-15">
   <link rel="stylesheet" href="departments-page.css?v=1">
+  <link rel="stylesheet" href="directory-chat.css?v=1">
 </head>
 
 <body class="directory-page">
@@ -22,6 +23,20 @@
     <div class="header-container">
       <a class="logo people-logo" href="#directory" aria-label="The People directory"><img src="the-people-logo.png"
           alt="The People" width="1960" height="816"></a>
+      <div class="directory-header-tools" data-page="directory">
+      <div class="header-search">
+        <label for="header-search-input" class="visually-hidden">
+          Search employees
+        </label>
+
+        <input type="search" id="header-search-input" placeholder="Search people...." autoComplete="off">
+      </div>
+      <a class="add-teammate header-quick-invite" href="admin.html">
+        + Quick Invite
+      </a>
+
+
+      </div>
       <div class="department-header-tools" hidden>
         <form id="header-directory-form" role="search" aria-label="Search the People Directory">
           <label class="visually-hidden" for="header-directory-search">Search people, skills, roles, or locations</label>
@@ -324,13 +339,16 @@
   <!-- Keep this order: library, configuration, shared store, directory UI. -->
   <script src="supabase-2.118.0.js"></script>
   <script src="supabase-config.js"></script>
+  <script src="miguel-supabase-config.js"></script>
   <script src="employee-store.js?v=world-location-17"></script>
   <script src="card-local-time.js?v=world-location-17"></script>
   <script src="departments-page.js?v=1"></script>
-  <script src="directory.js?v=departments-summary-19"></script>
+  <script src="directory.js?v=chat-profile-actions-20"></script>
   <script src="kinetic-text.js?v=kinetic-sentence-14"></script>
   <script src="liquid-navigation.js?v=liquid-nav-15"></script>
   <script src="guild.js?v=groups-1"></script>
+  <div id="message-notification-root"></div>
+  <script src="notifications.js"></script>
 </body>
 
 </html>
