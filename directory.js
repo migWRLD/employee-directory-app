@@ -1197,7 +1197,40 @@ function openProfile(employee) {
         projectList.append(item);
     }
     projectsSection.append(projectList);
-    content.append(closeButton, header, grid);
+
+
+    const messageButton = document.createElement('button');
+
+messageButton.type = 'button';
+messageButton.className = 'profile-message-button';
+messageButton.textContent = 'Send Direct Message';
+
+messageButton.addEventListener('click', () => {
+    if (!employee.chat_user_id) {
+        console.error(
+            'This employee is missing chat_user_id:',
+            employee
+        );
+
+        alert(
+            'This employee is not connected to a chat account yet.'
+        );
+
+        return;
+    }
+
+    window.location.href =
+        `messaging.html?recipient=${encodeURIComponent(
+            employee.chat_user_id
+        )}`;
+});
+
+content.append(
+    closeButton,
+    header,
+    messageButton,
+    grid
+);
 
     modal.appendChild(content);
     document.body.appendChild(modal);
@@ -1347,6 +1380,22 @@ if (clearButton) {
 // Spotlight links select a profile by its stable directory ID after data loads.
 let requestedProfileId = new URLSearchParams(window.location.search).get('employee');
 let directoryRequest = 0;
+
+const chatUserIdsByEmail = {
+    'miguel@latech.com':
+        '00cc93be-2610-404a-9a1b-7d50fb413407',
+
+    'kassandra@latech.com':
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+};
+const chatUserIdsByName = {
+    'arias miguel':
+        '00cc93be-2610-404a-9a1b-7d50fb413407',
+
+    'vera kassandra':
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+};
+
 async function loadEmployees() {
     const request = ++directoryRequest;
     const status = document.querySelector('#directory-status');
@@ -1365,7 +1414,15 @@ async function loadEmployees() {
     division: employee.division || 'TBD',
     team: employee.team || 'TBD',
     squad: employee.squad || 'TBD',
-    leader: employee.leader || 'TBD'
+    leader: employee.leader || 'TBD',
+    chat_user_id:
+        employee.chat_user_id ||
+        chatUserIdsByEmail[
+            String(employee.email || '').trim().toLowerCase()
+        ] ||
+        chatUserIdsByName[
+            String(employee.name || '').trim().toLowerCase()
+        ]
 }));
         updateStatistics();
         populateDivisionFilter();

@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Messages | Employee Directory</title>
+
+    <link rel="stylesheet" href="directory.css">
+</head>
+
+<body>
+    <main class="messaging-page">
+        <a href="directory.html">
+            ← Back to Directory
+        </a>
+
+        <h1>
+            Chat with
+            <span id="recipient-name">Employee</span>
+        </h1>
+
+        <p id="message-status" aria-live="polite"></p>
+
+        <section
+            id="conversation"
+            aria-live="polite"
+            aria-label="Message conversation"
+        >
+            <!-- Messages will appear here -->
+        </section>
+
+        <section class="quick-prompts" aria-labelledby="quick-prompts-heading">
+            <h2 id="quick-prompts-heading">Quick Messages</h2>
+
+            <button
+                type="button"
+                data-prompt="Hi, I wanted to introduce myself."
+            >
+                Introduce yourself
+            </button>
+
+            <button
+                type="button"
+                data-prompt="Hi, would you be available for a quick chat?"
+            >
+                Request a chat
+            </button>
+        </section>
+
+        <form id="message-form">
+            <label for="message-composer">
+                Message
+            </label>
+
+            <textarea
+                id="message-composer"
+                maxlength="500"
+                placeholder="Write a message..."
+                required
+            ></textarea>
+
+            <button type="submit">
+                Send Message
+            </button>
+        </form>
+
+        <section class="meeting-tools">
+            <h2>Schedule a 1:1</h2>
+
+            <label for="meeting-date">Date</label>
+            <input id="meeting-date" type="date">
+
+            <label for="meeting-time">Time</label>
+            <input id="meeting-time" type="time">
+
+            <button id="schedule-button" type="button">
+                Schedule 1:1
+            </button>
+        </section>
+    </main>
+
+    <script src="supabase-2.118.0.js"></script>
+    <script src="miguel-supabase-config.js"></script>
+    <script src="messaging.js"></script>
+</body>
+</html>

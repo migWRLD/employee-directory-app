@@ -1013,7 +1013,7 @@ async function loadEmployees() {
         if (!window.EmployeeStore) throw new Error('Connection unavailable');
         const data = await window.EmployeeStore.list();
         if (request !== directoryRequest) return;
-        employees = data;
+        
         updateStatistics();
         renderDepartments();
         const selected = departmentFilter.value;
