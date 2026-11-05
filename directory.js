@@ -1150,12 +1150,43 @@ function openProfile(employee) {
         window.print();
     });
 
+    const returnButton = document.createElement('button');
+    returnButton.type = 'button';
+    returnButton.className = 'return-directory-button';
+    returnButton.textContent = 'Return to Directory';
+
+    returnButton.addEventListener('click', async () => {
+
+        try {
+            const modal = document.querySelector('[role="dialog"]')?.click();
+            
+            modal.setAttribute('aria-hidden','true');
+                        
+            const target = document.querySelector('[data-page="directory"]');
+            if (!target) {
+                throw new Error('No section with data-page="directory" found');
+
+            }
+            target.click();
+        
+        }
+        catch (error) {
+            console.error('Failed to return to directory:', error);
+            returnButton.textContent = 'Redirect failed';
+        
+        
+        }
+
+
+    });
+
 
     const closeButton = document.createElement('button');
     closeButton.className = 'modal-close';
     closeButton.type = 'button';
     closeButton.textContent = '×';
     closeButton.setAttribute('aria-label', 'Close profile');
+
     const header = document.createElement('div');
     header.className = 'profile-header';
     const identity = document.createElement('div');
@@ -1276,7 +1307,7 @@ messageButton.addEventListener('click', () => {
         )}`;
 });
 
-    profileActions.append(shareButton, printButton);
+    profileActions.append(shareButton, printButton, returnButton);
     content.append(closeButton, header, profileActions, messageButton, grid);
 
     modal.appendChild(content);
