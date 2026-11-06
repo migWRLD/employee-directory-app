@@ -1476,14 +1476,32 @@ const chatUserIdsByEmail = {
         '00cc93be-2610-404a-9a1b-7d50fb413407',
 
     'kassandra@latech.com':
-        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2',
+        
+    'jessy@latech.com':
+        '1e26788e-08cd-4a7c-a1be-7c5a91f9593b',
+
+    'najeeb916@latech.com':
+        '6c5c1df1-7a3b-49ba-96ee-7ccd784f592e',
+
+    'omid@latech.com':
+        '37faf8a4-fae2-4bfb-8690-b60d01966179'
 };
 const chatUserIdsByName = {
     'arias miguel':
         '00cc93be-2610-404a-9a1b-7d50fb413407',
 
     'vera kassandra':
-        '7d6e0964-e69d-44bb-9a60-96986f05b8a2'
+        '7d6e0964-e69d-44bb-9a60-96986f05b8a2',
+
+     'jessy@latech.com' : 
+        '1e26788e-08cd-4a7c-a1be-7c5a91f9593b',
+
+    'najeeb916@latech.com':
+        '6c5c1df1-7a3b-49ba-96ee-7ccd784f592e',
+
+    'omid@latech.com':
+        '37faf8a4-fae2-4bfb-8690-b60d01966179',
 };
 
 async function loadEmployees() {
