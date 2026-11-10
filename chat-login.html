@@ -15,44 +15,43 @@
 
 <body class="login-page">
     <main class="login-container">
-        <h1>Employee Directory</h1>
+    <img
+        class="login-logo"
+        src="./img/logo/Pictionary.png"
+        alt="Pictionary"
+    >
 
-        <p>
-            Log in to send a direct message.
-        </p>
+    <p class="login-slogan">
+        Because every connection starts with finding the right person.
+    </p>
 
-        <a href="index.html#directory">← Back to Directory</a>
-        <form id="login-form">
-            <label for="email">
-                Email
-            </label>
+    <form id="login-form">
+        <label for="email">Email</label>
 
-            <input
-                id="email"
-                type="email"
-                required
-            >
+        <input
+            id="email"
+            type="email"
+            required
+        >
 
-            <label for="password">
-                Password
-            </label>
+        <label for="password">Password</label>
 
-            <input
-                id="password"
-                type="password"
-                required
-            >
+        <input
+            id="password"
+            type="password"
+            required
+        >
 
-            <button type="submit">
-                Log In
-            </button>
+        <button type="submit">
+            Log In
+        </button>
 
-            <p
-                id="login-message"
-                aria-live="polite"
-            ></p>
-        </form>
-    </main>
+        <p
+            id="login-message"
+            aria-live="polite"
+        ></p>
+    </form>
+</main>
 
     <script src="supabase-2.118.0.js"></script>
     <script src="miguel-supabase-config.js"></script>
