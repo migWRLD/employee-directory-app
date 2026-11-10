@@ -24,6 +24,8 @@ const sendButton = messageForm.querySelector('button[type="submit"]');
 sendButton.disabled = true;
 
 async function loadChat() {
+    conversation.replaceChildren();
+
     if (!recipientId) {
         messageStatus.textContent =
             'No employee was selected.';
@@ -59,10 +61,8 @@ async function loadChat() {
 
     recipientName.textContent =
         recipient.display_name;
-
+        showPendingNotificationMessage();
     subscribeToMessages();
-    await loadMessages();
-
     chatReady = true;
     sendButton.disabled = false;
     messageComposer.focus();
@@ -78,18 +78,25 @@ async function loadMessages() {
                 `and(sender_id.eq.${recipientId},recipient_id.eq.${currentUser.id})`
             )
             .order('created_at', {
-                ascending: true
-            });
+                ascending: false
+            })
+            .limit(1);
 
     if (error) {
+        console.error(
+            'Message loading error:',
+            error
+        );
+
         messageStatus.textContent =
-            'Messages could not load.';
+            'The most recent message could not load.';
+
         return;
     }
 
     conversation.replaceChildren();
 
-    data.forEach(displayMessage);
+    data.reverse().forEach(displayMessage);
 }
 
 function displayMessage(message) {
@@ -154,6 +161,25 @@ document
         });
     });
 
+    function showPendingNotificationMessage() {
+    const pendingKey =
+        `pending-message-${recipientId}`;
+
+    const pendingMessage =
+        sessionStorage.getItem(pendingKey);
+
+    if (!pendingMessage) {
+        return;
+    }
+
+    displayMessage({
+        body: pendingMessage,
+        sender_id: recipientId
+    });
+
+    sessionStorage.removeItem(pendingKey);
+}
+
 function subscribeToMessages() {
     miguelSupabaseClient
         .channel('private-messages')
@@ -187,3 +213,9 @@ function subscribeToMessages() {
 }
 
 loadChat();
+
+window.addEventListener('pageshow', event => {
+    if (event.persisted) {
+        conversation.replaceChildren();
+    }
+});
